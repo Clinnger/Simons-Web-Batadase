@@ -293,8 +293,8 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: carousel.js v3.3.5
- * http://getbootstrap.com/javascript/#carousel
+ * Bootstrap: vehicleousel.js v3.3.5
+ * http://getbootstrap.com/javascript/#vehicleousel
  * ========================================================================
  * Copyright 2011-2015 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
@@ -307,9 +307,9 @@ if (typeof jQuery === 'undefined') {
   // CAROUSEL CLASS DEFINITION
   // =========================
 
-  var Carousel = function (element, options) {
+  var Vehicleousel = function (element, options) {
     this.$element    = $(element)
-    this.$indicators = this.$element.find('.carousel-indicators')
+    this.$indicators = this.$element.find('.vehicleousel-indicators')
     this.options     = options
     this.paused      = null
     this.sliding     = null
@@ -317,25 +317,25 @@ if (typeof jQuery === 'undefined') {
     this.$active     = null
     this.$items      = null
 
-    this.options.keyboard && this.$element.on('keydown.bs.carousel', $.proxy(this.keydown, this))
+    this.options.keyboard && this.$element.on('keydown.bs.vehicleousel', $.proxy(this.keydown, this))
 
     this.options.pause == 'hover' && !('ontouchstart' in document.documentElement) && this.$element
-      .on('mouseenter.bs.carousel', $.proxy(this.pause, this))
-      .on('mouseleave.bs.carousel', $.proxy(this.cycle, this))
+      .on('mouseenter.bs.vehicleousel', $.proxy(this.pause, this))
+      .on('mouseleave.bs.vehicleousel', $.proxy(this.cycle, this))
   }
 
-  Carousel.VERSION  = '3.3.5'
+  Vehicleousel.VERSION  = '3.3.5'
 
-  Carousel.TRANSITION_DURATION = 600
+  Vehicleousel.TRANSITION_DURATION = 600
 
-  Carousel.DEFAULTS = {
+  Vehicleousel.DEFAULTS = {
     interval: 5000,
     pause: 'hover',
     wrap: true,
     keyboard: true
   }
 
-  Carousel.prototype.keydown = function (e) {
+  Vehicleousel.prototype.keydown = function (e) {
     if (/input|textarea/i.test(e.target.tagName)) return
     switch (e.which) {
       case 37: this.prev(); break
@@ -346,7 +346,7 @@ if (typeof jQuery === 'undefined') {
     e.preventDefault()
   }
 
-  Carousel.prototype.cycle = function (e) {
+  Vehicleousel.prototype.cycle = function (e) {
     e || (this.paused = false)
 
     this.interval && clearInterval(this.interval)
@@ -358,12 +358,12 @@ if (typeof jQuery === 'undefined') {
     return this
   }
 
-  Carousel.prototype.getItemIndex = function (item) {
+  Vehicleousel.prototype.getItemIndex = function (item) {
     this.$items = item.parent().children('.item')
     return this.$items.index(item || this.$active)
   }
 
-  Carousel.prototype.getItemForDirection = function (direction, active) {
+  Vehicleousel.prototype.getItemForDirection = function (direction, active) {
     var activeIndex = this.getItemIndex(active)
     var willWrap = (direction == 'prev' && activeIndex === 0)
                 || (direction == 'next' && activeIndex == (this.$items.length - 1))
@@ -373,19 +373,19 @@ if (typeof jQuery === 'undefined') {
     return this.$items.eq(itemIndex)
   }
 
-  Carousel.prototype.to = function (pos) {
+  Vehicleousel.prototype.to = function (pos) {
     var that        = this
     var activeIndex = this.getItemIndex(this.$active = this.$element.find('.item.active'))
 
     if (pos > (this.$items.length - 1) || pos < 0) return
 
-    if (this.sliding)       return this.$element.one('slid.bs.carousel', function () { that.to(pos) }) // yes, "slid"
+    if (this.sliding)       return this.$element.one('slid.bs.vehicleousel', function () { that.to(pos) }) // yes, "slid"
     if (activeIndex == pos) return this.pause().cycle()
 
     return this.slide(pos > activeIndex ? 'next' : 'prev', this.$items.eq(pos))
   }
 
-  Carousel.prototype.pause = function (e) {
+  Vehicleousel.prototype.pause = function (e) {
     e || (this.paused = true)
 
     if (this.$element.find('.next, .prev').length && $.support.transition) {
@@ -398,17 +398,17 @@ if (typeof jQuery === 'undefined') {
     return this
   }
 
-  Carousel.prototype.next = function () {
+  Vehicleousel.prototype.next = function () {
     if (this.sliding) return
     return this.slide('next')
   }
 
-  Carousel.prototype.prev = function () {
+  Vehicleousel.prototype.prev = function () {
     if (this.sliding) return
     return this.slide('prev')
   }
 
-  Carousel.prototype.slide = function (type, next) {
+  Vehicleousel.prototype.slide = function (type, next) {
     var $active   = this.$element.find('.item.active')
     var $next     = next || this.getItemForDirection(type, $active)
     var isCycling = this.interval
@@ -418,7 +418,7 @@ if (typeof jQuery === 'undefined') {
     if ($next.hasClass('active')) return (this.sliding = false)
 
     var relatedTarget = $next[0]
-    var slideEvent = $.Event('slide.bs.carousel', {
+    var slideEvent = $.Event('slide.bs.vehicleousel', {
       relatedTarget: relatedTarget,
       direction: direction
     })
@@ -435,7 +435,7 @@ if (typeof jQuery === 'undefined') {
       $nextIndicator && $nextIndicator.addClass('active')
     }
 
-    var slidEvent = $.Event('slid.bs.carousel', { relatedTarget: relatedTarget, direction: direction }) // yes, "slid"
+    var slidEvent = $.Event('slid.bs.vehicleousel', { relatedTarget: relatedTarget, direction: direction }) // yes, "slid"
     if ($.support.transition && this.$element.hasClass('slide')) {
       $next.addClass(type)
       $next[0].offsetWidth // force reflow
@@ -450,7 +450,7 @@ if (typeof jQuery === 'undefined') {
             that.$element.trigger(slidEvent)
           }, 0)
         })
-        .emulateTransitionEnd(Carousel.TRANSITION_DURATION)
+        .emulateTransitionEnd(Vehicleousel.TRANSITION_DURATION)
     } else {
       $active.removeClass('active')
       $next.addClass('active')
@@ -470,28 +470,28 @@ if (typeof jQuery === 'undefined') {
   function Plugin(option) {
     return this.each(function () {
       var $this   = $(this)
-      var data    = $this.data('bs.carousel')
-      var options = $.extend({}, Carousel.DEFAULTS, $this.data(), typeof option == 'object' && option)
+      var data    = $this.data('bs.vehicleousel')
+      var options = $.extend({}, Vehicleousel.DEFAULTS, $this.data(), typeof option == 'object' && option)
       var action  = typeof option == 'string' ? option : options.slide
 
-      if (!data) $this.data('bs.carousel', (data = new Carousel(this, options)))
+      if (!data) $this.data('bs.vehicleousel', (data = new Vehicleousel(this, options)))
       if (typeof option == 'number') data.to(option)
       else if (action) data[action]()
       else if (options.interval) data.pause().cycle()
     })
   }
 
-  var old = $.fn.carousel
+  var old = $.fn.vehicleousel
 
-  $.fn.carousel             = Plugin
-  $.fn.carousel.Constructor = Carousel
+  $.fn.vehicleousel             = Plugin
+  $.fn.vehicleousel.Constructor = Vehicleousel
 
 
   // CAROUSEL NO CONFLICT
   // ====================
 
-  $.fn.carousel.noConflict = function () {
-    $.fn.carousel = old
+  $.fn.vehicleousel.noConflict = function () {
+    $.fn.vehicleousel = old
     return this
   }
 
@@ -503,7 +503,7 @@ if (typeof jQuery === 'undefined') {
     var href
     var $this   = $(this)
     var $target = $($this.attr('data-target') || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '')) // strip for ie7
-    if (!$target.hasClass('carousel')) return
+    if (!$target.hasClass('vehicleousel')) return
     var options = $.extend({}, $target.data(), $this.data())
     var slideIndex = $this.attr('data-slide-to')
     if (slideIndex) options.interval = false
@@ -511,20 +511,20 @@ if (typeof jQuery === 'undefined') {
     Plugin.call($target, options)
 
     if (slideIndex) {
-      $target.data('bs.carousel').to(slideIndex)
+      $target.data('bs.vehicleousel').to(slideIndex)
     }
 
     e.preventDefault()
   }
 
   $(document)
-    .on('click.bs.carousel.data-api', '[data-slide]', clickHandler)
-    .on('click.bs.carousel.data-api', '[data-slide-to]', clickHandler)
+    .on('click.bs.vehicleousel.data-api', '[data-slide]', clickHandler)
+    .on('click.bs.vehicleousel.data-api', '[data-slide-to]', clickHandler)
 
   $(window).on('load', function () {
-    $('[data-ride="carousel"]').each(function () {
-      var $carousel = $(this)
-      Plugin.call($carousel, $carousel.data())
+    $('[data-ride="vehicleousel"]').each(function () {
+      var $vehicleousel = $(this)
+      Plugin.call($vehicleousel, $vehicleousel.data())
     })
   })
 

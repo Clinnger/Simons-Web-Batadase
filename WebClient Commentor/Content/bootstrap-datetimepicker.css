@@ -91,7 +91,7 @@
 .bootstrap-datetimepicker-widget button[data-action] {
   padding: 6px;
 }
-.bootstrap-datetimepicker-widget .btn[data-action="incrementHours"]::after {
+.bootstrap-datetimepicker-widget .btn[data-action="incrementHourStamp"]::after {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -100,7 +100,7 @@
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
-  content: "Increment Hours";
+  content: "Increment HourStamp";
 }
 .bootstrap-datetimepicker-widget .btn[data-action="incrementMinutes"]::after {
   position: absolute;
@@ -113,7 +113,7 @@
   border: 0;
   content: "Increment Minutes";
 }
-.bootstrap-datetimepicker-widget .btn[data-action="decrementHours"]::after {
+.bootstrap-datetimepicker-widget .btn[data-action="decrementHourStamp"]::after {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -122,7 +122,7 @@
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
-  content: "Decrement Hours";
+  content: "Decrement HourStamp";
 }
 .bootstrap-datetimepicker-widget .btn[data-action="decrementMinutes"]::after {
   position: absolute;
@@ -135,7 +135,7 @@
   border: 0;
   content: "Decrement Minutes";
 }
-.bootstrap-datetimepicker-widget .btn[data-action="showHours"]::after {
+.bootstrap-datetimepicker-widget .btn[data-action="showHourStamp"]::after {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -144,7 +144,7 @@
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
-  content: "Show Hours";
+  content: "Show HourStamp";
 }
 .bootstrap-datetimepicker-widget .btn[data-action="showMinutes"]::after {
   position: absolute;

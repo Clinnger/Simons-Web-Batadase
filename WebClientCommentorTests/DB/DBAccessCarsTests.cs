@@ -11,104 +11,104 @@ using System.Data.SqlClient;
 namespace WebClient_Commentor.DB.Tests
 {
     [TestClass()]
-    public class DBAccessCarsTests
+    public class DBAccessVehiclesTests
     {
         string connectionString;
-        Cars carsToFind;
-        DBAccessCars findCars;
+        Vehicle vehiclesToFind;
+        DBAccessVehicles findVehicles;
 
         [TestInitialize]
         public void InitializeBeforeEachMethod()
         {
-            carsToFind = new Cars();
-            findCars = new DBAccessCars();
+            vehiclesToFind = new Vehicle();
+            findVehicles = new DBAccessVehicles();
         }
         [TestMethod()]
-        public void DBAccessCarsTest()
+        public void DBAccessVehiclesTest()
         {
             Assert.Fail();
         }
 
         [TestMethod()]
-        public void getAllCarsTest()
+        public void getAllVehiclesTest()
         {
             Assert.Fail();
         }
 
         [TestMethod()]
-        public void getSortedCarsHourTest()
+        public void getSortedVehiclesHourTest()
         {
             Assert.Fail();
         }
 
         [TestMethod()]
-        public void getSortedCarsDayAndHoursTest()
+        public void getSortedVehiclesDayAndHoursTest()
         {
-            //Arrange Cars
-            carsToFind.CarId = 1;
-            carsToFind.DateId = 1;
-            carsToFind.CurrentHour = "07";
-            carsToFind.CarCount = 78;
+            //Arrange Vehicles
+            vehiclesToFind.VehicleId = 6;
+            vehiclesToFind.DateStamp = "10 Dec 2020";
+            vehiclesToFind.HourStamp = "09";
+            vehiclesToFind.VehicleAmount = 15;
 
             //Act
-            IEnumerable<Cars> foundTestCars = findCars.getSortedCarsDayAndHours("07", "07", "12 Oct 2020", "12 Oct 2020");
+            IEnumerable<Vehicle> foundTestVehicles = findVehicles.getSortedVehiclesDayAndHours("09", "09", "10 Dec 2020", "10 Dec 2020");
 
             //Assert
-            Assert.IsNotNull(foundTestCars);
+            Assert.IsNotNull(foundTestVehicles);
         }
 
         [TestMethod()]
-        public void getSortedCarsDayTest()
+        public void getSortedVehiclesDayTest()
         {
-            //Arrange Cars
-            carsToFind.DateId = 3;
-            carsToFind.CarCount = 1503;
+            //Arrange Vehicles
+            vehiclesToFind.DateStamp = "10 Dec 2020";
+            vehiclesToFind.VehicleAmount = 50;
 
             //Act
-            IEnumerable<Cars> foundTestCars = findCars.getSortedCarsDay("12 Oct 2020","12 Oct 2020");
+            IEnumerable<Vehicle> foundTestVehicles = findVehicles.getSortedVehiclesDay("10 Dec 2020","10 Dec 2020");
 
             //Assert
-            Assert.IsNotNull(foundTestCars);
+            Assert.IsNotNull(foundTestVehicles);
         }
 
         [TestMethod()]
         public void DeleteFromDBTest()
         {
             //Arrange
-            findCars.InsertToDBToDelete();
-            int testDeletion = findCars.FindLatestCarId();
+            findVehicles.InsertToDBToDelete();
+            int testDeletion = findVehicles.FindLatestVehicleId();
 
             //Act
-            findCars.DeleteFromDB(testDeletion);
+            findVehicles.DeleteFromDB(testDeletion);
                 
             //Assert
-            Assert.AreNotEqual(testDeletion, findCars.FindLatestCarId());
+            Assert.AreNotEqual(testDeletion, findVehicles.FindLatestVehicleId());
         }
 
         [TestMethod()]
-        public void GetAllCarsByLatestDateTest()
+        public void GetAllVehiclesByLatestDateTest()
         {
             //Arrange
-            carsToFind.CarId = 276;
-            carsToFind.DateId = 22;
-            carsToFind.CurrentHour = "22";
-            carsToFind.CarCount = 500;
+            vehiclesToFind.VehicleId = 8;
+            vehiclesToFind.DateStamp = "11 Dec 2020";
+            vehiclesToFind.HourStamp = "10";
+            vehiclesToFind.VehicleAmount = 65;
 
             //Act
-            IEnumerable<Cars> foundTestCars = findCars.GetAllCarsByLatestDate();
+            IEnumerable<Vehicle> foundTestVehicles = findVehicles.GetAllVehiclesByLatestDate();
 
             //Assert
-            Assert.IsNotNull(foundTestCars);
+            Assert.IsNotNull(foundTestVehicles);
         }
 
         [TestMethod()]
-        public void Get7LatestCarsTest()
+        public void Get7LatestVehiclesTest()
         {
             Assert.Fail();
         }
 
         [TestMethod()]
-        public void GetCarsFromReaderTest()
+        public void GetVehiclesFromReaderTest()
         {
             Assert.Fail();
         }

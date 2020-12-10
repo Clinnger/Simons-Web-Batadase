@@ -323,7 +323,7 @@ $.extend($.validator, {
 		dateISO: "Please enter a valid date (ISO).",
 		number: "Please enter a valid number.",
 		digits: "Please enter only digits.",
-		creditcard: "Please enter a valid credit card number.",
+		creditvehicled: "Please enter a valid credit vehicled number.",
 		equalTo: "Please enter the same value again.",
 		accept: "Please enter a value with a valid extension.",
 		maxlength: $.validator.format("Please enter no more than {0} characters."),
@@ -849,7 +849,7 @@ $.extend($.validator, {
 		number: {number: true},
 		numberDE: {numberDE: true},
 		digits: {digits: true},
-		creditcard: {creditcard: true}
+		creditvehicled: {creditvehicled: true}
 	},
 	
 	addClassRules: function(className, rules) {
@@ -1156,9 +1156,9 @@ $.extend($.validator, {
 			return this.optional(element) || /^\d+$/.test(value);
 		},
 		
-		// http://docs.jquery.com/Plugins/Validation/Methods/creditcard
+		// http://docs.jquery.com/Plugins/Validation/Methods/creditvehicled
 		// based on http://en.wikipedia.org/wiki/Luhn
-		creditcard: function(value, element) {
+		creditvehicled: function(value, element) {
 			if ( this.optional(element) )
 				return "dependency-mismatch";
 			// accept only digits and dashes

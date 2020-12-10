@@ -6,12 +6,13 @@ using System.Web.Mvc;
 using WebClient_Commentor.Models;
 using WebClient_Commentor.DB;
 using Antlr.Runtime.Tree;
+using System.Windows.Forms;
 
 namespace WebClient_Commentor.Controllers
 {
     public class HomeController : Controller
     {
-        DBAccessCars dbCars = new DBAccessCars();
+        DBAccessVehicles dbVehicles = new DBAccessVehicles();
         
         public ActionResult About()
         {
@@ -26,11 +27,11 @@ namespace WebClient_Commentor.Controllers
         public ActionResult Index()
         {
 
-            DBAccessCars dbcars = new DBAccessCars();
-            List<Cars> carsToDisplay = dbcars.getAllCars();
+            DBAccessVehicles dbvehicles = new DBAccessVehicles();
+            List<Vehicle> vehiclesToDisplay = dbvehicles.getAllVehicles();
             Dashboard();
             
-            return View(carsToDisplay);
+            return View(vehiclesToDisplay);
         }
 
         public ActionResult Video_stream()
@@ -58,66 +59,67 @@ namespace WebClient_Commentor.Controllers
         /*
         public JsonResult SortBetweenHours(string startHour, string endHour)
         {
-            List<Cars> cars = dbCars.getSortedCarsHour(startHour, endHour);
-            IEnumerable<int> selectCount = SelectCarCount(cars);
-            IEnumerable<string> selectHour = SelectCurrentHours(cars);
-            return Json(new { countSelect = selectCount, hourSelect = selectHour }, JsonRequestBehavior.AllowGet);
+            List<Vehicles> vehicles = dbVehicles.getSortedVehiclesHour(startHour, endHour);
+            IEnumerable<int> selectAmount = SelectVehicleAmount(vehicles);
+            IEnumerable<string> selectHour = SelectHourStamp(vehicles);
+            return Json(new { countSelect = selectAmount, hourSelect = selectHour }, JsonRequestBehavior.AllowGet);
         }*/
 
         public JsonResult SortBetweenDays(string startDate, string endDate)
         {
-            List<Cars> cars = dbCars.getSortedCarsDay(startDate, endDate);
-            IEnumerable<int> selectCount = SelectCarCount(cars);
-            IEnumerable<string> selectHour = SelectCurrentHours(cars);
-            IEnumerable<string> selectDay = SelectCurrentDays(cars);
-            return Json(new { countSelect = selectCount, hourSelect = selectHour, daySelect = selectDay }, JsonRequestBehavior.AllowGet);
+            List<Vehicle> vehicle = dbVehicles.getSortedVehiclesDay(startDate, endDate);
+            IEnumerable<int> selectAmount = SelectVehicleAmount(vehicle);
+            IEnumerable<string> selectHour = SelectHourStamp(vehicle);
+            IEnumerable<string> selectDay = SelectCurrentDays(vehicle);
+            return Json(new { countSelect = selectAmount, hourSelect = selectHour, daySelect = selectDay }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult SortBetweenWeeks()
         {
-            List<Cars> cars = dbCars.LoopThroughWeeks();
-            IEnumerable<int> selectCount = SelectCarCount(cars);
-            IEnumerable<string> selectHour = SelectCurrentHours(cars);
-            IEnumerable<string> selectDay = SelectCurrentWeekNumber(cars);
-            return Json(new { countSelect = selectCount, hourSelect = selectHour, daySelect = selectDay }, JsonRequestBehavior.AllowGet);
+            List<Vehicle> vehicles = dbVehicles.LoopThroughWeeks();
+            IEnumerable<int> selectAmount = SelectVehicleAmount(vehicles);
+            IEnumerable<string> selectHour = SelectHourStamp(vehicles);
+            IEnumerable<string> selectDay = SelectCurrentWeekNumber(vehicles);
+            return Json(new { countSelect = selectAmount, hourSelect = selectHour, daySelect = selectDay }, JsonRequestBehavior.AllowGet);
         }
 
 
         public JsonResult SortBetweenDaysAndHours(string startHour, string endHour, string startDate, string endDate)
         {
-            List<Cars> cars = dbCars.getSortedCarsDayAndHours(startHour, endHour, startDate, endDate);
-            IEnumerable<int> selectCount = SelectCarCount(cars);
-            IEnumerable<string> selectHour = SelectCurrentHours(cars);
-            IEnumerable<string> selectDay = SelectCurrentDays(cars);
-            return Json(new { countSelect = selectCount, hourSelect = selectHour, daySelect = selectDay }, JsonRequestBehavior.AllowGet);
+            List<Vehicle> vehicles = dbVehicles.getSortedVehiclesDayAndHours(startHour, endHour, startDate, endDate);
+            IEnumerable<int> selectAmount = SelectVehicleAmount(vehicles);
+            IEnumerable<string> selectHour = SelectHourStamp(vehicles);
+            IEnumerable<string> selectDay = SelectCurrentDays(vehicles);
+            return Json(new { countSelect = selectAmount, hourSelect = selectHour, daySelect = selectDay }, JsonRequestBehavior.AllowGet);
+            
         }
-
+        [Authorize]
         public ActionResult DeleteFromDb(string deleteText = "")
         {
             int toParse = Int32.Parse(deleteText);
-            DBAccessCars dbcars = new DBAccessCars();
-            dbcars.DeleteFromDB(toParse);
+            DBAccessVehicles dbvehicles = new DBAccessVehicles();
+            dbvehicles.DeleteFromDB(toParse);
 
             return RedirectToAction("Index");
         }
 
-        public IEnumerable<int> SelectCarCount(List<Cars> cars)
+        public IEnumerable<int> SelectVehicleAmount(List<Vehicle> vehicles)
         {
-            IEnumerable<int> CarCount = cars.Select(x => x.CarCount);
-            return CarCount;
+            IEnumerable<int> VehicleAmount = vehicles.Select(x => x.VehicleAmount);
+            return VehicleAmount;
         }
 
-        public IEnumerable<string> SelectCurrentHours(List<Cars> cars)
+        public IEnumerable<string> SelectHourStamp(List<Vehicle> vehicles)
         {
-            List<string> CurrentHour = cars.Select(x => x.CurrentHour).ToList();
-            List<string> CurrentDate = cars.Select(x => x.CurrentDate).ToList();
+            List<string> HourStamp = vehicles.Select(x => x.HourStamp).ToList();
+            List<string> DateStamp = vehicles.Select(x => x.DateStamp).ToList();
             IEnumerable<string> HourAndDate = new List<string>();
 
             int index = 0;
-            while(index != CurrentHour.Count())
+            while(index != HourStamp.Count())
             {
-                string hour = CurrentHour[index];
-                string date = CurrentDate[index];
+                string hour = HourStamp[index];
+                string date = DateStamp[index];
                 string finalResult = "Kl: " + hour + ":00" + " - " + "Dato: " + date;
                 HourAndDate = HourAndDate.Concat(new[] { finalResult });
                 Console.WriteLine("");
@@ -126,17 +128,17 @@ namespace WebClient_Commentor.Controllers
             return HourAndDate;
         }
 
-        public IEnumerable<string> SelectCurrentDays(List<Cars> cars)
+        public IEnumerable<string> SelectCurrentDays(List<Vehicle> vehicles)
         {
-            List<string> CurrentHour = cars.Select(x => x.CurrentHour).ToList();
-            List<string> CurrentDate = cars.Select(x => x.CurrentDate).ToList();
+            List<string> HourStamp = vehicles.Select(x => x.HourStamp).ToList();
+            List<string> DateStamp = vehicles.Select(x => x.DateStamp).ToList();
             IEnumerable<string> HourAndDate = new List<string>();
 
             int index = 0;
-            while (index != CurrentDate.Count())
+            while (index != DateStamp.Count())
             {
-                string hour = CurrentHour[index];
-                string date = CurrentDate[index];
+                string hour = HourStamp[index];
+                string date = DateStamp[index];
                 string finalResult = "Kl: " + hour + ":00" + " - " + "Dato: " + date;
                 HourAndDate = HourAndDate.Concat(new[] { finalResult });
                 index++;
@@ -144,17 +146,17 @@ namespace WebClient_Commentor.Controllers
             return HourAndDate;
         }
 
-        public IEnumerable<string> SelectCurrentWeekNumber(List<Cars> cars)
+        public IEnumerable<string> SelectCurrentWeekNumber(List<Vehicle> vehicles)
         {
-            List<string> CurrentHour = cars.Select(x => x.CurrentHour).ToList();
-            List<string> CurrentDate = cars.Select(x => x.CurrentDate).ToList();
+            List<string> HourStamp = vehicles.Select(x => x.HourStamp).ToList();
+            List<string> DateStamp = vehicles.Select(x => x.DateStamp).ToList();
             IEnumerable<string> HourAndDate = new List<string>();
 
             int index = 0;
-            while (index != CurrentDate.Count())
+            while (index != DateStamp.Count())
             {
-                string hour = CurrentHour[index];
-                string date = CurrentDate[index];
+                string hour = HourStamp[index];
+                string date = DateStamp[index];
                 string finalResult = "Uge: " + date;
                 HourAndDate = HourAndDate.Concat(new[] { finalResult });
                 index++;
@@ -166,52 +168,52 @@ namespace WebClient_Commentor.Controllers
 
         public ActionResult Dashboard()
         {
-            IEnumerable<int> CarCount = null;
-            IEnumerable<string> CurrentHour = null;
-            string CurrentDate = null;
-            DBAccessCars dbcars = new DBAccessCars();
+            IEnumerable<int> VehicleAmount = null;
+            IEnumerable<string> HourStamp = null;
+            string DateStamp = null;
+            DBAccessVehicles dbvehicles = new DBAccessVehicles();
 
-            List<Cars> carsByDate = dbcars.GetAllCarsByLatestDate();
-            List<Cars> carsBy7Latest = dbcars.Get7LatestCars();
+            List<Vehicle> vehiclesByDate = dbvehicles.GetAllVehiclesByLatestDate();
+            List<Vehicle> vehiclesBy7Latest = dbvehicles.Get7LatestVehicles();
             List<String> Hours = new List<String>();
 
             //måske til senere.
-            //var CarCount = cars.Select(x => x.CarCount).OrderBy(x => x).ToArray()
+            //var VehicleAmount = vehicles.Select(x => x.VehicleAmount).OrderBy(x => x).ToArray()
             int Amount = 0;
 
-            if (carsByDate != null)
+            if (vehiclesByDate != null)
             {
-                CarCount = SelectCarCount(carsByDate);
-                CurrentHour = SelectCurrentHours(carsByDate);
-                CurrentDate = carsByDate[carsByDate.Count - 1].CurrentDate;
-                foreach (var item in CurrentHour)
+                VehicleAmount = SelectVehicleAmount(vehiclesByDate);
+                HourStamp = SelectHourStamp(vehiclesByDate);
+                DateStamp = vehiclesByDate[vehiclesByDate.Count - 1].DateStamp;
+                foreach (var item in HourStamp)
                 {
                     Hours.Add(item);
                 }
-                foreach (var item in CurrentDate)
+                foreach (var item in DateStamp)
                 {
                     Amount++;
                 }
             }
             else
             {
-                CarCount = SelectCarCount(carsBy7Latest);
-                CurrentHour = SelectCurrentHours(carsBy7Latest);
-                CurrentDate = carsBy7Latest[carsBy7Latest.Count - 1].CurrentDate;
-                foreach (var item in CurrentHour)
+                VehicleAmount = SelectVehicleAmount(vehiclesBy7Latest);
+                HourStamp = SelectHourStamp(vehiclesBy7Latest);
+                DateStamp = vehiclesBy7Latest[vehiclesBy7Latest.Count - 1].DateStamp;
+                foreach (var item in HourStamp)
                 {
                     Hours.Add(item);
                 }
-                foreach (var item in CurrentDate)
+                foreach (var item in DateStamp)
                 {
                     Amount++;
                 }
             }
-            
-            ViewBag.CARCOUNT = CarCount;
+            ViewBag.CARCOUNT = VehicleAmount;
             ViewBag.CURRENTHOUR = Hours;
-            ViewBag.CURRENTDATE = CurrentDate;
+            ViewBag.DateStamp = DateStamp;
             ViewBag.AMOUNT = Amount;
+            ViewBag.LOGGEDIN = false;
 
             return View();
         }

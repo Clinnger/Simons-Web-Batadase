@@ -1,14 +1,14 @@
 //
-// Carousel
+// Vehicleousel
 // --------------------------------------------------
 
 
 // Wrapper for the slide container and indicators
-.carousel {
+.vehicleousel {
   position: relative;
 }
 
-.carousel-inner {
+.vehicleousel-inner {
   position: relative;
   overflow: hidden;
   width: 100%;
@@ -90,18 +90,18 @@
 // Left/right controls for nav
 // ---------------------------
 
-.carousel-control {
+.vehicleousel-control {
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
-  width: @carousel-control-width;
-  .opacity(@carousel-control-opacity);
-  font-size: @carousel-control-font-size;
-  color: @carousel-control-color;
+  width: @vehicleousel-control-width;
+  .opacity(@vehicleousel-control-opacity);
+  font-size: @vehicleousel-control-font-size;
+  color: @vehicleousel-control-color;
   text-align: center;
-  text-shadow: @carousel-text-shadow;
-  // We can't have this transition here because WebKit cancels the carousel
+  text-shadow: @vehicleousel-text-shadow;
+  // We can't have this transition here because WebKit cancels the vehicleousel
   // animation if you trip this while in the middle of another animation.
 
   // Set gradients for backgrounds
@@ -118,7 +118,7 @@
   &:hover,
   &:focus {
     outline: 0;
-    color: @carousel-control-color;
+    color: @vehicleousel-control-color;
     text-decoration: none;
     .opacity(.9);
   }
@@ -168,9 +168,9 @@
 // Optional indicator pips
 //
 // Add an unordered list with the following class and add a list item for each
-// slide your carousel holds.
+// slide your vehicleousel holds.
 
-.carousel-indicators {
+.vehicleousel-indicators {
   position: absolute;
   bottom: 10px;
   left: 50%;
@@ -187,7 +187,7 @@
     height: 10px;
     margin: 1px;
     text-indent: -999px;
-    border: 1px solid @carousel-indicator-border-color;
+    border: 1px solid @vehicleousel-indicator-border-color;
     border-radius: 10px;
     cursor: pointer;
 
@@ -207,14 +207,14 @@
     margin: 0;
     width:  12px;
     height: 12px;
-    background-color: @carousel-indicator-active-bg;
+    background-color: @vehicleousel-indicator-active-bg;
   }
 }
 
 // Optional captions
 // -----------------------------
 // Hidden by default for smaller viewports
-.carousel-caption {
+.vehicleousel-caption {
   position: absolute;
   left: 15%;
   right: 15%;
@@ -222,11 +222,11 @@
   z-index: 10;
   padding-top: 20px;
   padding-bottom: 20px;
-  color: @carousel-caption-color;
+  color: @vehicleousel-caption-color;
   text-align: center;
-  text-shadow: @carousel-text-shadow;
+  text-shadow: @vehicleousel-text-shadow;
   & .btn {
-    text-shadow: none; // No shadow for button elements in carousel-caption
+    text-shadow: none; // No shadow for button elements in vehicleousel-caption
   }
 }
 
@@ -235,7 +235,7 @@
 @media screen and (min-width: @screen-sm-min) {
 
   // Scale up the controls a smidge
-  .carousel-control {
+  .vehicleousel-control {
     .glyphicon-chevron-left,
     .glyphicon-chevron-right,
     .icon-prev,
@@ -256,14 +256,14 @@
   }
 
   // Show and left align the captions
-  .carousel-caption {
+  .vehicleousel-caption {
     left: 20%;
     right: 20%;
     padding-bottom: 30px;
   }
 
   // Move up the indicators
-  .carousel-indicators {
+  .vehicleousel-indicators {
     bottom: 20px;
   }
 }

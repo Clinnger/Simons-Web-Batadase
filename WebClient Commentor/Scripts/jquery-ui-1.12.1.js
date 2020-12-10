@@ -100,7 +100,7 @@ $.widget = function( name, base, prototype ) {
 		}
 	};
 
-	// Extend with the existing constructor to carry over any static properties
+	// Extend with the existing constructor to vehiclery over any static properties
 	$.extend( constructor, existingConstructor, {
 		version: prototype.version,
 
@@ -4305,7 +4305,7 @@ var uniqueId = $.fn.extend( {
 //>>label: Accordion
 //>>group: Widgets
 // jscs:disable maximumLineLength
-//>>description: Displays collapsible content panels for presenting information in a limited amount of space.
+//>>description: Displays collapsible content panels for presenting information in a limited VehicleAmount of space.
 // jscs:enable maximumLineLength
 //>>docs: http://api.jqueryui.com/accordion/
 //>>demos: http://jqueryui.com/accordion/
@@ -4946,7 +4946,7 @@ var widgetsMenu = $.widget( "ui.menu", {
 	delay: 300,
 	options: {
 		icons: {
-			submenu: "ui-icon-caret-1-e"
+			submenu: "ui-icon-vehicleet-1-e"
 		},
 		items: "> *",
 		menus: "ul",
@@ -5093,7 +5093,7 @@ var widgetsMenu = $.widget( "ui.menu", {
 
 		submenus.children().each( function() {
 			var elem = $( this );
-			if ( elem.data( "ui-menu-submenu-caret" ) ) {
+			if ( elem.data( "ui-menu-submenu-vehicleet" ) ) {
 				elem.remove();
 			}
 		} );
@@ -5211,12 +5211,12 @@ var widgetsMenu = $.widget( "ui.menu", {
 			.each( function() {
 				var menu = $( this ),
 					item = menu.prev(),
-					submenuCaret = $( "<span>" ).data( "ui-menu-submenu-caret", true );
+					submenuVehicleet = $( "<span>" ).data( "ui-menu-submenu-vehicleet", true );
 
-				that._addClass( submenuCaret, "ui-menu-icon", "ui-icon " + icon );
+				that._addClass( submenuVehicleet, "ui-menu-icon", "ui-icon " + icon );
 				item
 					.attr( "aria-haspopup", "true" )
-					.prepend( submenuCaret );
+					.prepend( submenuVehicleet );
 				menu.attr( "aria-labelledby", item.attr( "id" ) );
 			} );
 
@@ -5356,7 +5356,7 @@ var widgetsMenu = $.widget( "ui.menu", {
 		clearTimeout( this.timer );
 
 		// Don't open if already open fixes a Firefox bug that caused a .5 pixel
-		// shift in the submenu position when mousing over the caret icon
+		// shift in the submenu position when mousing over the vehicleet icon
 		if ( submenu.attr( "aria-hidden" ) !== "true" ) {
 			return;
 		}
@@ -5775,7 +5775,7 @@ $.widget( "ui.autocomplete", {
 			.appendTo( this._appendTo() )
 			.menu( {
 
-				// disable ARIA support, the live region takes care of that
+				// disable ARIA support, the live region takes vehiclee of that
 				role: null
 			} )
 			.hide()
@@ -6213,8 +6213,8 @@ $.widget( "ui.autocomplete", $.ui.autocomplete, {
 	options: {
 		messages: {
 			noResults: "No search results.",
-			results: function( amount ) {
-				return amount + ( amount > 1 ? " results are" : " result is" ) +
+			results: function( VehicleAmount ) {
+				return VehicleAmount + ( VehicleAmount > 1 ? " results are" : " result is" ) +
 					" available, use up and down arrow keys to navigate.";
 			}
 		}
@@ -8715,7 +8715,7 @@ $.extend( Datepicker.prototype, {
 
 		newDate = ( newDate && newDate.toString() === "Invalid Date" ? defaultDate : newDate );
 		if ( newDate ) {
-			newDate.setHours( 0 );
+			newDate.setHourStamp( 0 );
 			newDate.setMinutes( 0 );
 			newDate.setSeconds( 0 );
 			newDate.setMilliseconds( 0 );
@@ -8724,7 +8724,7 @@ $.extend( Datepicker.prototype, {
 	},
 
 	/* Handle switch to/from daylight saving.
-	 * Hours may be non-zero on daylight saving cut-over:
+	 * HourStamp may be non-zero on daylight saving cut-over:
 	 * > 12 when midnight changeover, but then cannot generate
 	 * midnight datetime, so jump to 1AM, otherwise reset.
 	 * @param  date  (Date) the date to check
@@ -8734,7 +8734,7 @@ $.extend( Datepicker.prototype, {
 		if ( !date ) {
 			return null;
 		}
-		date.setHours( date.getHours() > 12 ? date.getHours() + 2 : 0 );
+		date.setHourStamp( date.getHourStamp() > 12 ? date.getHourStamp() + 2 : 0 );
 		return date;
 	},
 
@@ -8821,7 +8821,7 @@ $.extend( Datepicker.prototype, {
 			showCurrentAtPos = this._get( inst, "showCurrentAtPos" ),
 			stepMonths = this._get( inst, "stepMonths" ),
 			isMultiMonth = ( numMonths[ 0 ] !== 1 || numMonths[ 1 ] !== 1 ),
-			currentDate = this._daylightSavingAdjust( ( !inst.currentDay ? new Date( 9999, 9, 9 ) :
+			DateStamp = this._daylightSavingAdjust( ( !inst.currentDay ? new Date( 9999, 9, 9 ) :
 				new Date( inst.currentYear, inst.currentMonth, inst.currentDay ) ) ),
 			minDate = this._getMinMaxDate( inst, "min" ),
 			maxDate = this._getMinMaxDate( inst, "max" ),
@@ -8868,7 +8868,7 @@ $.extend( Datepicker.prototype, {
 			( hideIfNoPrevNext ? "" : "<a class='ui-datepicker-next ui-corner-all ui-state-disabled' title='" + nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "w" : "e" ) + "'>" + nextText + "</span></a>" ) );
 
 		currentText = this._get( inst, "currentText" );
-		gotoDate = ( this._get( inst, "gotoCurrent" ) && inst.currentDay ? currentDate : today );
+		gotoDate = ( this._get( inst, "gotoCurrent" ) && inst.currentDay ? DateStamp : today );
 		currentText = ( !navigationAsDateFormat ? currentText :
 			this.formatDate( currentText, gotoDate, this._getFormatConfig( inst ) ) );
 
@@ -8956,14 +8956,14 @@ $.extend( Datepicker.prototype, {
 							" " + this._dayOverClass : "" ) + // highlight selected day
 							( unselectable ? " " + this._unselectableClass + " ui-state-disabled" : "" ) +  // highlight unselectable days
 							( otherMonth && !showOtherMonths ? "" : " " + daySettings[ 1 ] + // highlight custom dates
-							( printDate.getTime() === currentDate.getTime() ? " " + this._currentClass : "" ) + // highlight selected day
+							( printDate.getTime() === DateStamp.getTime() ? " " + this._currentClass : "" ) + // highlight selected day
 							( printDate.getTime() === today.getTime() ? " ui-datepicker-today" : "" ) ) + "'" + // highlight today (if different)
 							( ( !otherMonth || showOtherMonths ) && daySettings[ 2 ] ? " title='" + daySettings[ 2 ].replace( /'/g, "&#39;" ) + "'" : "" ) + // cell title
 							( unselectable ? "" : " data-handler='selectDay' data-event='click' data-month='" + printDate.getMonth() + "' data-year='" + printDate.getFullYear() + "'" ) + ">" + // actions
 							( otherMonth && !showOtherMonths ? "&#xa0;" : // display for other months
 							( unselectable ? "<span class='ui-state-default'>" + printDate.getDate() + "</span>" : "<a class='ui-state-default" +
 							( printDate.getTime() === today.getTime() ? " ui-state-highlight" : "" ) +
-							( printDate.getTime() === currentDate.getTime() ? " ui-state-active" : "" ) + // highlight selected day
+							( printDate.getTime() === DateStamp.getTime() ? " ui-state-active" : "" ) + // highlight selected day
 							( otherMonth ? " ui-priority-secondary" : "" ) + // distinguish dates from other months
 							"' href='#'>" + printDate.getDate() + "</a>" ) ) + "</td>"; // display selectable date
 						printDate.setDate( printDate.getDate() + 1 );
@@ -15788,7 +15788,7 @@ var widgetsSortable = $.widget( "ui.sortable", $.ui.mouse, {
 
 	},
 
-	/* Be careful with the following core functions */
+	/* Be vehicleeful with the following core functions */
 	_intersectsWith: function( item ) {
 
 		var x1 = this.positionAbs.left,
