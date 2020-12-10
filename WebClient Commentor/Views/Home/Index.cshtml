@@ -30,11 +30,13 @@
         <div class="container">
             <canvas id="myChart"></canvas>
         </div>
-
         <script>
-        var Amount = 1000;
+        var isAuth = false;
+            var Amount = 1000;
+            var loggedin = @Html.Raw(Json.Encode(ViewBag.LOGGEDIN));
         var color = poolColors(Amount)
-        var chartData = {
+            var chartData = {
+
             labels: @Html.Raw(Json.Encode(ViewBag.CURRENTHOUR)),
             datasets: [{
                 label: '',
@@ -128,15 +130,35 @@
                 pool.push(getRandomColor());
             }
             return pool;
-        }
+            }
 
-        function loop(chart, index, method) {
+            function checkIfEmpty(method, str, str2, str3, str4) {
+                check = true;
+                if (method == "SortBetweenDaysAndHours") {
+                    if (str == "" || str2 == "" || str3 == "" || str4 == "") {
+                        check = false;
+                    }
+                }
+                else if (method == "SortBetweenDays") {
+                    if (str3 == "" || str4 == "") {
+                        check = false;
+                    }
+                }
+                else if (method == "SortBetweenWeeks") {
+                    check = true;
+                }
+                return check;
+            }
+
+            function loop(chart, index, method) {
             var countSelect;
             var hourSelect;
-            var str = document.getElementById("text1").value;
-            var str2 = document.getElementById("text2").value;
+            var str = document.getElementById("startTime").value;
+            var str2 = document.getElementById("slutTime").value;
             var str3 = document.getElementById("datetimepicker1").value;
             var str4 = document.getElementById("datetimepicker2").value;
+            if (checkIfEmpty(method, str, str2, str3, str4)) {
+
             $.ajax({
                 type: 'GET',
                 dataType: 'json',
@@ -151,7 +173,6 @@
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                 }
             });
-
             countSelect = count;
             hourSelect = hours;
             daySelect = days;
@@ -170,9 +191,13 @@
             }
 
             var Amount3 = 0;
-            while (Amount2 != count) {
-                addData2(chart, Amount2, Amount3, hourSelect, countselect);
-                Amount2++;
+                    while (Amount2 != count) {
+                        addData2(chart, Amount2, Amount3, hourSelect, countselect);
+                        Amount2++;
+                    }
+            }
+            else {
+                alert("Du mangler at udfylde i timer og eller dato")
             }
         }
 
@@ -208,9 +233,9 @@
         <div class="centerDiv" style="width: 100%; display: table">
             <div style="display: table-row">
                 <div style="width: 350px; display: table-cell;">
-                    <input id="text1" placeholder="Start Time" min="0" max="23">
+                    <input id="startTime" placeholder="Start Time" min="0" max="23">
                     <br />
-                    <input id="text2" placeholder="Slut Time" min="0" max="23">
+                    <input id="slutTime" placeholder="Slut Time" min="0" max="23">
                     <br />
                     <br>
                     <div class="row">
@@ -272,12 +297,14 @@
                     <br />
 
                 </div>
+
                 <br />
                 <div style="width: 350px; display: table-cell;">
-                    <input type="text" id="txtDelete" name="txtDelete" placeholder="Indtast ID for at slette" />
+
+                    <input type="hidden" id="txtDelete" name="txtDelete" placeholder="Indtast ID for at slette" />
                     <br />
                     <br>
-                    <input type="button" value="Slet" id="btnSlet"
+                    <input type="hidden" value="Slet" id="btnSlet"
                            onclick="location.href='@Url.Action("DeleteFromDb", "Home")?deleteText=' + document.getElementById('txtDelete').value; return false;" />
                 </div>
             </div>
@@ -286,4 +313,5 @@
     <script src="~/Scripts/jquery-3.4.1.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
 </body>
+
 </html>

@@ -2752,7 +2752,7 @@ var exports$1 = {
 	 * @param {number} y - The y axis of the coordinate for the rectangle starting point.
 	 * @param {number} width - The rectangle's width.
 	 * @param {number} height - The rectangle's height.
-	 * @param {number} radius - The rounded amount (in pixels) for the four corners.
+	 * @param {number} radius - The rounded VehicleAmount (in pixels) for the four corners.
 	 * @todo handle `radius` as top-left, top-right, bottom-right, bottom-left array/object?
 	 */
 	roundedRect: function(ctx, x, y, width, height, radius) {
@@ -7222,7 +7222,7 @@ core_defaults._set('global', {
 
 // The layout service is very self explanatory.  It's responsible for the layout within a chart.
 // Scales, Legends and Plugins all rely on the layout service and can easily register to be placed anywhere they need
-// It is this service's responsibility of carrying out that layout.
+// It is this service's responsibility of vehiclerying out that layout.
 var core_layouts = {
 	defaults: {},
 
@@ -7806,7 +7806,7 @@ var platform_dom$2 = {
 			canvas.style[key] = value;
 		});
 
-		// The canvas render size might have been changed (and thus the state stack discarded),
+		// The canvas render size might have been changed (and thus the state stack disvehicleded),
 		// we can't use save() and restore() to restore the initial state. So make sure that at
 		// least the canvas context is reset to the default state by setting the canvas width.
 		// https://www.w3.org/TR/2011/WD-html5-20110525/the-canvas-element.html
@@ -8157,8 +8157,8 @@ core_defaults._set('global', {
 		footerAlign: 'left',
 		yPadding: 6,
 		xPadding: 6,
-		caretPadding: 2,
-		caretSize: 5,
+		vehicleetPadding: 2,
+		vehicleetSize: 5,
 		cornerRadius: 6,
 		multiKeyBackground: '#fff',
 		displayColors: true,
@@ -8401,7 +8401,7 @@ function getBaseModel(tooltipOpts) {
 		footerMarginTop: tooltipOpts.footerMarginTop,
 
 		// Appearance
-		caretSize: tooltipOpts.caretSize,
+		vehicleetSize: tooltipOpts.vehicleetSize,
 		cornerRadius: tooltipOpts.cornerRadius,
 		backgroundColor: tooltipOpts.backgroundColor,
 		opacity: 0,
@@ -8519,10 +8519,10 @@ function determineAlignment(tooltip, size) {
 	}
 
 	olf = function(x) {
-		return x + size.width + model.caretSize + model.caretPadding > chart.width;
+		return x + size.width + model.vehicleetSize + model.vehicleetPadding > chart.width;
 	};
 	orf = function(x) {
-		return x - size.width - model.caretSize - model.caretPadding < 0;
+		return x - size.width - model.vehicleetSize - model.vehicleetPadding < 0;
 	};
 	yf = function(y) {
 		return y <= midY ? 'top' : 'bottom';
@@ -8561,13 +8561,13 @@ function getBackgroundPoint(vm, size, alignment, chart) {
 	var x = vm.x;
 	var y = vm.y;
 
-	var caretSize = vm.caretSize;
-	var caretPadding = vm.caretPadding;
+	var vehicleetSize = vm.vehicleetSize;
+	var vehicleetPadding = vm.vehicleetPadding;
 	var cornerRadius = vm.cornerRadius;
 	var xAlign = alignment.xAlign;
 	var yAlign = alignment.yAlign;
-	var paddingAndSize = caretSize + caretPadding;
-	var radiusAndPadding = cornerRadius + caretPadding;
+	var paddingAndSize = vehicleetSize + vehicleetPadding;
+	var radiusAndPadding = cornerRadius + vehicleetPadding;
 
 	if (xAlign === 'right') {
 		x -= size.width;
@@ -8724,8 +8724,8 @@ var exports$4 = core_element.extend({
 			height: existingModel.height
 		};
 		var tooltipPosition = {
-			x: existingModel.caretX,
-			y: existingModel.caretY
+			x: existingModel.vehicleetX,
+			y: existingModel.vehicleetY
 		};
 
 		var i, len;
@@ -8773,7 +8773,7 @@ var exports$4 = core_element.extend({
 			// Initial positioning and colors
 			model.x = tooltipPosition.x;
 			model.y = tooltipPosition.y;
-			model.caretPadding = opts.caretPadding;
+			model.vehicleetPadding = opts.vehicleetPadding;
 			model.labelColors = labelColors;
 			model.labelTextColors = labelTextColors;
 
@@ -8796,9 +8796,9 @@ var exports$4 = core_element.extend({
 		model.width = tooltipSize.width;
 		model.height = tooltipSize.height;
 
-		// Point where the caret on the tooltip points to
-		model.caretX = tooltipPosition.x;
-		model.caretY = tooltipPosition.y;
+		// Point where the vehicleet on the tooltip points to
+		model.vehicleetX = tooltipPosition.x;
+		model.vehicleetY = tooltipPosition.y;
 
 		me._model = model;
 
@@ -8809,18 +8809,18 @@ var exports$4 = core_element.extend({
 		return me;
 	},
 
-	drawCaret: function(tooltipPoint, size) {
+	drawVehicleet: function(tooltipPoint, size) {
 		var ctx = this._chart.ctx;
 		var vm = this._view;
-		var caretPosition = this.getCaretPosition(tooltipPoint, size, vm);
+		var vehicleetPosition = this.getVehicleetPosition(tooltipPoint, size, vm);
 
-		ctx.lineTo(caretPosition.x1, caretPosition.y1);
-		ctx.lineTo(caretPosition.x2, caretPosition.y2);
-		ctx.lineTo(caretPosition.x3, caretPosition.y3);
+		ctx.lineTo(vehicleetPosition.x1, vehicleetPosition.y1);
+		ctx.lineTo(vehicleetPosition.x2, vehicleetPosition.y2);
+		ctx.lineTo(vehicleetPosition.x3, vehicleetPosition.y3);
 	},
-	getCaretPosition: function(tooltipPoint, size, vm) {
+	getVehicleetPosition: function(tooltipPoint, size, vm) {
 		var x1, x2, x3, y1, y2, y3;
-		var caretSize = vm.caretSize;
+		var vehicleetSize = vm.vehicleetSize;
 		var cornerRadius = vm.cornerRadius;
 		var xAlign = vm.xAlign;
 		var yAlign = vm.yAlign;
@@ -8834,40 +8834,40 @@ var exports$4 = core_element.extend({
 
 			if (xAlign === 'left') {
 				x1 = ptX;
-				x2 = x1 - caretSize;
+				x2 = x1 - vehicleetSize;
 				x3 = x1;
 
-				y1 = y2 + caretSize;
-				y3 = y2 - caretSize;
+				y1 = y2 + vehicleetSize;
+				y3 = y2 - vehicleetSize;
 			} else {
 				x1 = ptX + width;
-				x2 = x1 + caretSize;
+				x2 = x1 + vehicleetSize;
 				x3 = x1;
 
-				y1 = y2 - caretSize;
-				y3 = y2 + caretSize;
+				y1 = y2 - vehicleetSize;
+				y3 = y2 + vehicleetSize;
 			}
 		} else {
 			if (xAlign === 'left') {
-				x2 = ptX + cornerRadius + (caretSize);
-				x1 = x2 - caretSize;
-				x3 = x2 + caretSize;
+				x2 = ptX + cornerRadius + (vehicleetSize);
+				x1 = x2 - vehicleetSize;
+				x3 = x2 + vehicleetSize;
 			} else if (xAlign === 'right') {
-				x2 = ptX + width - cornerRadius - caretSize;
-				x1 = x2 - caretSize;
-				x3 = x2 + caretSize;
+				x2 = ptX + width - cornerRadius - vehicleetSize;
+				x1 = x2 - vehicleetSize;
+				x3 = x2 + vehicleetSize;
 			} else {
-				x2 = vm.caretX;
-				x1 = x2 - caretSize;
-				x3 = x2 + caretSize;
+				x2 = vm.vehicleetX;
+				x1 = x2 - vehicleetSize;
+				x3 = x2 + vehicleetSize;
 			}
 			if (yAlign === 'top') {
 				y1 = ptY;
-				y2 = y1 - caretSize;
+				y2 = y1 - vehicleetSize;
 				y3 = y1;
 			} else {
 				y1 = ptY + height;
-				y2 = y1 + caretSize;
+				y2 = y1 + vehicleetSize;
 				y3 = y1;
 				// invert drawing order
 				var tmp = x3;
@@ -9026,22 +9026,22 @@ var exports$4 = core_element.extend({
 		ctx.beginPath();
 		ctx.moveTo(x + radius, y);
 		if (yAlign === 'top') {
-			this.drawCaret(pt, tooltipSize);
+			this.drawVehicleet(pt, tooltipSize);
 		}
 		ctx.lineTo(x + width - radius, y);
 		ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
 		if (yAlign === 'center' && xAlign === 'right') {
-			this.drawCaret(pt, tooltipSize);
+			this.drawVehicleet(pt, tooltipSize);
 		}
 		ctx.lineTo(x + width, y + height - radius);
 		ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
 		if (yAlign === 'bottom') {
-			this.drawCaret(pt, tooltipSize);
+			this.drawVehicleet(pt, tooltipSize);
 		}
 		ctx.lineTo(x + radius, y + height);
 		ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
 		if (yAlign === 'center' && xAlign === 'left') {
-			this.drawCaret(pt, tooltipSize);
+			this.drawVehicleet(pt, tooltipSize);
 		}
 		ctx.lineTo(x, y + radius);
 		ctx.quadraticCurveTo(x, y, x + radius, y);
@@ -9547,7 +9547,7 @@ helpers$1.extend(Chart.prototype, /** @lends Chart */ {
 				me.scale = scale;
 			}
 		});
-		// clear up discarded scales
+		// clear up disvehicleded scales
 		helpers$1.each(updated, function(hasUpdated, id) {
 			if (!hasUpdated) {
 				delete scales[id];
@@ -10672,7 +10672,7 @@ var core_helpers = function() {
 		var width = boundingRect.right - boundingRect.left - paddingLeft - paddingRight;
 		var height = boundingRect.bottom - boundingRect.top - paddingTop - paddingBottom;
 
-		// We divide by the current device pixel ratio, because the canvas is scaled up by that amount in each direction. However
+		// We divide by the current device pixel ratio, because the canvas is scaled up by that VehicleAmount in each direction. However
 		// the backend model is in unscaled coordinates. Since we are going to deal with our model coordinates, we go back here
 		mouseX = Math.round((mouseX - boundingRect.left - paddingLeft) / (width) * canvas.width / chart.currentDevicePixelRatio);
 		mouseY = Math.round((mouseY - boundingRect.top - paddingTop) / (height) * canvas.height / chart.currentDevicePixelRatio);
@@ -10965,9 +10965,9 @@ helpers$1.extend(DateAdapter.prototype, /** @lends DateAdapter */ {
 	format: abstract,
 
 	/**
-	 * Adds the specified `amount` of `unit` to the given `timestamp`.
+	 * Adds the specified `VehicleAmount` of `unit` to the given `timestamp`.
 	 * @param {number} timestamp - the input timestamp
-	 * @param {number} amount - the amount to add
+	 * @param {number} VehicleAmount - the VehicleAmount to add
 	 * @param {Unit} unit - the unit as string
 	 * @return {number}
 	 * @function
@@ -11876,7 +11876,7 @@ var Scale = core_element.extend({
 		if (isNullOrUndef(rawValue)) {
 			return NaN;
 		}
-		// isNaN(object) returns true, so make sure NaN is checking for a number; Discard Infinite values
+		// isNaN(object) returns true, so make sure NaN is checking for a number; Disvehicled Infinite values
 		if ((typeof rawValue === 'number' || rawValue instanceof Number) && !isFinite(rawValue)) {
 			return NaN;
 		}
@@ -14739,8 +14739,8 @@ core_adapters._date.override(typeof moment === 'function' ? {
 		return moment(time).format(format);
 	},
 
-	add: function(time, amount, unit) {
-		return moment(time).add(amount, unit).valueOf();
+	add: function(time, VehicleAmount, unit) {
+		return moment(time).add(VehicleAmount, unit).valueOf();
 	},
 
 	diff: function(max, min, unit) {

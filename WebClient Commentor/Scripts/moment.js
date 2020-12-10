@@ -93,12 +93,12 @@
         parseTimezoneChunker = /([\+\-]|\d\d)/gi,
 
         // getter and setter names
-        proxyGettersAndSetters = 'Date|Hours|Minutes|Seconds|Milliseconds'.split('|'),
+        proxyGettersAndSetters = 'Date|HourStamp|Minutes|Seconds|Milliseconds'.split('|'),
         unitMillisecondFactors = {
             'Milliseconds' : 1,
             'Seconds' : 1e3,
             'Minutes' : 6e4,
-            'Hours' : 36e5,
+            'HourStamp' : 36e5,
             'Days' : 864e5,
             'Months' : 2592e6,
             'Years' : 31536e6
@@ -1425,13 +1425,13 @@
     // note: all values past the year are optional and will default to the lowest possible value.
     // [year, month, day , hour, minute, second, millisecond]
     function dateFromConfig(config) {
-        var i, date, input = [], currentDate, yearToUse;
+        var i, date, input = [], DateStamp, yearToUse;
 
         if (config._d) {
             return;
         }
 
-        currentDate = currentDateArray(config);
+        DateStamp = DateStampArray(config);
 
         //compute day of the year from weeks and weekdays
         if (config._w && config._a[DATE] == null && config._a[MONTH] == null) {
@@ -1440,7 +1440,7 @@
 
         //if the day of the year is set, figure out what it is
         if (config._dayOfYear) {
-            yearToUse = dfl(config._a[YEAR], currentDate[YEAR]);
+            yearToUse = dfl(config._a[YEAR], DateStamp[YEAR]);
 
             if (config._dayOfYear > daysInYear(yearToUse)) {
                 config._pf._overflowDayOfYear = true;
@@ -1457,7 +1457,7 @@
         // * if month is given, default only year
         // * if year is given, don't default anything
         for (i = 0; i < 3 && config._a[i] == null; ++i) {
-            config._a[i] = input[i] = currentDate[i];
+            config._a[i] = input[i] = DateStamp[i];
         }
 
         // Zero out whatever was not defaulted, including time
@@ -1507,7 +1507,7 @@
         dateFromConfig(config);
     }
 
-    function currentDateArray(config) {
+    function DateStampArray(config) {
         var now = new Date();
         if (config._useUTC) {
             return [
@@ -2004,7 +2004,7 @@
             parseIso = function (inp) {
                 // We'd normally use ~~inp for this, but unfortunately it also
                 // converts floats to ints.
-                // inp may be undefined, so careful calling replace on it.
+                // inp may be undefined, so vehicleeful calling replace on it.
                 var res = inp && parseFloat(inp.replace(',', '.'));
                 // apply sign while we're at it
                 return (isNaN(res) ? 0 : res) * sign;
@@ -2730,7 +2730,7 @@
     // specified which hour he wants. So trying to maintain the same hour (in
     // a new timezone) makes sense. Adding/subtracting hours does not follow
     // this rule.
-    moment.fn.hour = moment.fn.hours = makeAccessor('Hours', true);
+    moment.fn.hour = moment.fn.hours = makeAccessor('HourStamp', true);
     // moment.fn.month is defined separately
     moment.fn.date = makeAccessor('Date', true);
     moment.fn.dates = deprecate('dates accessor is deprecated. Use date instead.', makeAccessor('Date', true));
@@ -2967,7 +2967,7 @@
     moment.duration.fn.asMinutes = function () {
         return this.as('m');
     };
-    moment.duration.fn.asHours = function () {
+    moment.duration.fn.asHourStamp = function () {
         return this.as('h');
     };
     moment.duration.fn.asDays = function () {

@@ -174,11 +174,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\DateController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="DB\DBAccessCars.cs" />
+    <Compile Include="DB\DBAccessVehicles.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Cars.cs" />
+    <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Models\JqDate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

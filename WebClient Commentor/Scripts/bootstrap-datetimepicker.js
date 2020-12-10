@@ -64,7 +64,7 @@
             input,
             component = false,
             widget = false,
-            use24Hours,
+            use24HourStamp,
             minViewModeNumber = 0,
             actualFormat,
             parseFormats,
@@ -238,11 +238,11 @@
 
                 if (isEnabled('h')) {
                     topRow.append($('<td>')
-                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.incrementHour }).addClass('btn').attr('data-action', 'incrementHours').append($('<span>').addClass(options.icons.up))));
+                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.incrementHour }).addClass('btn').attr('data-action', 'incrementHourStamp').append($('<span>').addClass(options.icons.up))));
                     middleRow.append($('<td>')
-                        .append($('<span>').addClass('timepicker-hour').attr({ 'data-time-component': 'hours', 'title': options.tooltips.pickHour }).attr('data-action', 'showHours')));
+                        .append($('<span>').addClass('timepicker-hour').attr({ 'data-time-component': 'hours', 'title': options.tooltips.pickHour }).attr('data-action', 'showHourStamp')));
                     bottomRow.append($('<td>')
-                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.decrementHour }).addClass('btn').attr('data-action', 'decrementHours').append($('<span>').addClass(options.icons.down))));
+                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.decrementHour }).addClass('btn').attr('data-action', 'decrementHourStamp').append($('<span>').addClass(options.icons.down))));
                 }
                 if (isEnabled('m')) {
                     if (isEnabled('h')) {
@@ -275,7 +275,7 @@
                             .append($('<span>').addClass(options.icons.down))));
                 }
 
-                if (!use24Hours) {
+                if (!use24HourStamp) {
                     topRow.append($('<td>').addClass('separator'));
                     middleRow.append($('<td>')
                         .append($('<button>').addClass('btn btn-primary').attr({ 'data-action': 'togglePeriod', tabindex: '-1', 'title': options.tooltips.togglePeriod })));
@@ -337,11 +337,11 @@
                     template.removeClass('dropdown-menu');
                 }
 
-                if (use24Hours) {
+                if (use24HourStamp) {
                     template.addClass('usetwentyfour');
                 }
 
-                if (isEnabled('s') && !use24Hours) {
+                if (isEnabled('s') && !use24HourStamp) {
                     template.addClass('wider');
                 }
 
@@ -502,15 +502,15 @@
 
             fillDow = function () {
                 var row = $('<tr>'),
-                    currentDate = viewDate.clone().startOf('w').startOf('d');
+                    DateStamp = viewDate.clone().startOf('w').startOf('d');
 
                 if (options.calendarWeeks === true) {
                     row.append($('<th>').addClass('cw').text('#'));
                 }
 
-                while (currentDate.isBefore(viewDate.clone().endOf('w'))) {
-                    row.append($('<th>').addClass('dow').text(currentDate.format('dd')));
-                    currentDate.add(1, 'd');
+                while (DateStamp.isBefore(viewDate.clone().endOf('w'))) {
+                    row.append($('<th>').addClass('dow').text(DateStamp.format('dd')));
+                    DateStamp.add(1, 'd');
                 }
                 widget.find('.datepicker-days thead').append(row);
             },
@@ -523,12 +523,12 @@
                 return options.enabledDates[testDate.format('YYYY-MM-DD')] === true;
             },
 
-            isInDisabledHours = function (testDate) {
-                return options.disabledHours[testDate.format('H')] === true;
+            isInDisabledHourStamp = function (testDate) {
+                return options.disabledHourStamp[testDate.format('H')] === true;
             },
 
-            isInEnabledHours = function (testDate) {
-                return options.enabledHours[testDate.format('H')] === true;
+            isInEnabledHourStamp = function (testDate) {
+                return options.enabledHourStamp[testDate.format('H')] === true;
             },
 
             isValid = function (targetMoment, granularity) {
@@ -550,10 +550,10 @@
                 if (options.daysOfWeekDisabled && granularity === 'd' && options.daysOfWeekDisabled.indexOf(targetMoment.day()) !== -1) {
                     return false;
                 }
-                if (options.disabledHours && (granularity === 'h' || granularity === 'm' || granularity === 's') && isInDisabledHours(targetMoment)) {
+                if (options.disabledHourStamp && (granularity === 'h' || granularity === 'm' || granularity === 's') && isInDisabledHourStamp(targetMoment)) {
                     return false;
                 }
-                if (options.enabledHours && (granularity === 'h' || granularity === 'm' || granularity === 's') && !isInEnabledHours(targetMoment)) {
+                if (options.enabledHourStamp && (granularity === 'h' || granularity === 'm' || granularity === 's') && !isInEnabledHourStamp(targetMoment)) {
                     return false;
                 }
                 if (options.disabledTimeIntervals && (granularity === 'h' || granularity === 'm' || granularity === 's')) {
@@ -688,7 +688,7 @@
             fillDate = function () {
                 var daysView = widget.find('.datepicker-days'),
                     daysViewHeader = daysView.find('th'),
-                    currentDate,
+                    DateStamp,
                     html = [],
                     row,
                     clsNames = [],
@@ -712,42 +712,42 @@
                     daysViewHeader.eq(2).addClass('disabled');
                 }
 
-                currentDate = viewDate.clone().startOf('M').startOf('w').startOf('d');
+                DateStamp = viewDate.clone().startOf('M').startOf('w').startOf('d');
 
                 for (i = 0; i < 42; i++) { //always display 42 days (should show 6 weeks)
-                    if (currentDate.weekday() === 0) {
+                    if (DateStamp.weekday() === 0) {
                         row = $('<tr>');
                         if (options.calendarWeeks) {
-                            row.append('<td class="cw">' + currentDate.week() + '</td>');
+                            row.append('<td class="cw">' + DateStamp.week() + '</td>');
                         }
                         html.push(row);
                     }
                     clsNames = ['day'];
-                    if (currentDate.isBefore(viewDate, 'M')) {
+                    if (DateStamp.isBefore(viewDate, 'M')) {
                         clsNames.push('old');
                     }
-                    if (currentDate.isAfter(viewDate, 'M')) {
+                    if (DateStamp.isAfter(viewDate, 'M')) {
                         clsNames.push('new');
                     }
-                    if (currentDate.isSame(date, 'd') && !unset) {
+                    if (DateStamp.isSame(date, 'd') && !unset) {
                         clsNames.push('active');
                     }
-                    if (!isValid(currentDate, 'd')) {
+                    if (!isValid(DateStamp, 'd')) {
                         clsNames.push('disabled');
                     }
-                    if (currentDate.isSame(getMoment(), 'd')) {
+                    if (DateStamp.isSame(getMoment(), 'd')) {
                         clsNames.push('today');
                     }
-                    if (currentDate.day() === 0 || currentDate.day() === 6) {
+                    if (DateStamp.day() === 0 || DateStamp.day() === 6) {
                         clsNames.push('weekend');
                     }
                     notifyEvent({
                         type: 'dp.classify',
-                        date: currentDate,
+                        date: DateStamp,
                         classNames: clsNames
                     });
-                    row.append('<td data-action="selectDay" data-day="' + currentDate.format('L') + '" class="' + clsNames.join(' ') + '">' + currentDate.date() + '</td>');
-                    currentDate.add(1, 'd');
+                    row.append('<td data-action="selectDay" data-day="' + DateStamp.format('L') + '" class="' + clsNames.join(' ') + '">' + DateStamp.date() + '</td>');
+                    DateStamp.add(1, 'd');
                 }
 
                 daysView.find('tbody').empty().append(html);
@@ -759,21 +759,21 @@
                 updateDecades();
             },
 
-            fillHours = function () {
+            fillHourStamp = function () {
                 var table = widget.find('.timepicker-hours table'),
                     currentHour = viewDate.clone().startOf('d'),
                     html = [],
                     row = $('<tr>');
 
-                if (viewDate.hour() > 11 && !use24Hours) {
+                if (viewDate.hour() > 11 && !use24HourStamp) {
                     currentHour.hour(12);
                 }
-                while (currentHour.isSame(viewDate, 'd') && (use24Hours || (viewDate.hour() < 12 && currentHour.hour() < 12) || viewDate.hour() > 11)) {
+                while (currentHour.isSame(viewDate, 'd') && (use24HourStamp || (viewDate.hour() < 12 && currentHour.hour() < 12) || viewDate.hour() > 11)) {
                     if (currentHour.hour() % 4 === 0) {
                         row = $('<tr>');
                         html.push(row);
                     }
-                    row.append('<td data-action="selectHour" class="hour' + (!isValid(currentHour, 'h') ? ' disabled' : '') + '">' + currentHour.format(use24Hours ? 'HH' : 'hh') + '</td>');
+                    row.append('<td data-action="selectHour" class="hour' + (!isValid(currentHour, 'h') ? ' disabled' : '') + '">' + currentHour.format(use24HourStamp ? 'HH' : 'hh') + '</td>');
                     currentHour.add(1, 'h');
                 }
                 table.empty().append(html);
@@ -818,7 +818,7 @@
             fillTime = function () {
                 var toggle, newDate, timeComponents = widget.find('.timepicker span[data-time-component]');
 
-                if (!use24Hours) {
+                if (!use24HourStamp) {
                     toggle = widget.find('.timepicker [data-action=togglePeriod]');
                     newDate = date.clone().add((date.hours() >= 12) ? -12 : 12, 'h');
 
@@ -830,11 +830,11 @@
                         toggle.addClass('disabled');
                     }
                 }
-                timeComponents.filter('[data-time-component=hours]').text(date.format(use24Hours ? 'HH' : 'hh'));
+                timeComponents.filter('[data-time-component=hours]').text(date.format(use24HourStamp ? 'HH' : 'hh'));
                 timeComponents.filter('[data-time-component=minutes]').text(date.format('mm'));
                 timeComponents.filter('[data-time-component=seconds]').text(date.format('ss'));
 
-                fillHours();
+                fillHourStamp();
                 fillMinutes();
                 fillSeconds();
             },
@@ -1052,7 +1052,7 @@
                     }
                 },
 
-                incrementHours: function () {
+                incrementHourStamp: function () {
                     var newDate = date.clone().add(1, 'h');
                     if (isValid(newDate, 'h')) {
                         setValue(newDate);
@@ -1073,7 +1073,7 @@
                     }
                 },
 
-                decrementHours: function () {
+                decrementHourStamp: function () {
                     var newDate = date.clone().subtract(1, 'h');
                     if (isValid(newDate, 'h')) {
                         setValue(newDate);
@@ -1135,7 +1135,7 @@
                     widget.find('.timepicker .timepicker-picker').show();
                 },
 
-                showHours: function () {
+                showHourStamp: function () {
                     widget.find('.timepicker .timepicker-picker').hide();
                     widget.find('.timepicker .timepicker-hours').show();
                 },
@@ -1153,7 +1153,7 @@
                 selectHour: function (e) {
                     var hour = parseInt($(e.target).text(), 10);
 
-                    if (!use24Hours) {
+                    if (!use24HourStamp) {
                         if (date.hours() >= 12) {
                             if (hour !== 12) {
                                 hour += 12;
@@ -1385,15 +1385,15 @@
                 return (Object.keys(givenDatesIndexed).length) ? givenDatesIndexed : false;
             },
 
-            indexGivenHours = function (givenHoursArray) {
-                // Store given enabledHours and disabledHours as keys.
+            indexGivenHourStamp = function (givenHourStampArray) {
+                // Store given enabledHourStamp and disabledHourStamp as keys.
                 // This way we can check their existence in O(1) time instead of looping through whole array.
-                // (for example: options.enabledHours['2014-02-27'] === true)
-                var givenHoursIndexed = {};
-                $.each(givenHoursArray, function () {
-                    givenHoursIndexed[this] = true;
+                // (for example: options.enabledHourStamp['2014-02-27'] === true)
+                var givenHourStampIndexed = {};
+                $.each(givenHourStampArray, function () {
+                    givenHourStampIndexed[this] = true;
                 });
-                return (Object.keys(givenHoursIndexed).length) ? givenHoursIndexed : false;
+                return (Object.keys(givenHourStampIndexed).length) ? givenHourStampIndexed : false;
             },
 
             initFormatting = function () {
@@ -1412,7 +1412,7 @@
                     parseFormats.push(actualFormat);
                 }
 
-                use24Hours = (actualFormat.toLowerCase().indexOf('a') < 1 && actualFormat.replace(/\[.*?\]/g, '').indexOf('h') < 1);
+                use24HourStamp = (actualFormat.toLowerCase().indexOf('a') < 1 && actualFormat.replace(/\[.*?\]/g, '').indexOf('h') < 1);
 
                 if (isEnabled('y')) {
                     minViewModeNumber = 2;
@@ -2228,30 +2228,30 @@
             return picker;
         };
 
-        picker.disabledHours = function (hours) {
-            ///<signature helpKeyword="$.fn.datetimepicker.disabledHours">
+        picker.disabledHourStamp = function (hours) {
+            ///<signature helpKeyword="$.fn.datetimepicker.disabledHourStamp">
             ///<summary>Returns an array with the currently set disabled hours on the component.</summary>
-            ///<returns type="array">options.disabledHours</returns>
+            ///<returns type="array">options.disabledHourStamp</returns>
             ///</signature>
             ///<signature>
             ///<summary>Setting this takes precedence over options.minDate, options.maxDate configuration. Also calling this function removes the configuration of
-            ///options.enabledHours if such exist.</summary>
-            ///<param name="hours" locid="$.fn.datetimepicker.disabledHours_p:hours">Takes an [ int ] of values and disallows the user to select only from those hours.</param>
+            ///options.enabledHourStamp if such exist.</summary>
+            ///<param name="hours" locid="$.fn.datetimepicker.disabledHourStamp_p:hours">Takes an [ int ] of values and disallows the user to select only from those hours.</param>
             ///</signature>
             if (arguments.length === 0) {
-                return (options.disabledHours ? $.extend({}, options.disabledHours) : options.disabledHours);
+                return (options.disabledHourStamp ? $.extend({}, options.disabledHourStamp) : options.disabledHourStamp);
             }
 
             if (!hours) {
-                options.disabledHours = false;
+                options.disabledHourStamp = false;
                 update();
                 return picker;
             }
             if (!(hours instanceof Array)) {
-                throw new TypeError('disabledHours() expects an array parameter');
+                throw new TypeError('disabledHourStamp() expects an array parameter');
             }
-            options.disabledHours = indexGivenHours(hours);
-            options.enabledHours = false;
+            options.disabledHourStamp = indexGivenHourStamp(hours);
+            options.enabledHourStamp = false;
             if (options.useCurrent && !options.keepInvalid) {
                 var tries = 0;
                 while (!isValid(date, 'h')) {
@@ -2267,29 +2267,29 @@
             return picker;
         };
 
-        picker.enabledHours = function (hours) {
-            ///<signature helpKeyword="$.fn.datetimepicker.enabledHours">
+        picker.enabledHourStamp = function (hours) {
+            ///<signature helpKeyword="$.fn.datetimepicker.enabledHourStamp">
             ///<summary>Returns an array with the currently set enabled hours on the component.</summary>
-            ///<returns type="array">options.enabledHours</returns>
+            ///<returns type="array">options.enabledHourStamp</returns>
             ///</signature>
             ///<signature>
-            ///<summary>Setting this takes precedence over options.minDate, options.maxDate configuration. Also calling this function removes the configuration of options.disabledHours if such exist.</summary>
-            ///<param name="hours" locid="$.fn.datetimepicker.enabledHours_p:hours">Takes an [ int ] of values and allows the user to select only from those hours.</param>
+            ///<summary>Setting this takes precedence over options.minDate, options.maxDate configuration. Also calling this function removes the configuration of options.disabledHourStamp if such exist.</summary>
+            ///<param name="hours" locid="$.fn.datetimepicker.enabledHourStamp_p:hours">Takes an [ int ] of values and allows the user to select only from those hours.</param>
             ///</signature>
             if (arguments.length === 0) {
-                return (options.enabledHours ? $.extend({}, options.enabledHours) : options.enabledHours);
+                return (options.enabledHourStamp ? $.extend({}, options.enabledHourStamp) : options.enabledHourStamp);
             }
 
             if (!hours) {
-                options.enabledHours = false;
+                options.enabledHourStamp = false;
                 update();
                 return picker;
             }
             if (!(hours instanceof Array)) {
-                throw new TypeError('enabledHours() expects an array parameter');
+                throw new TypeError('enabledHourStamp() expects an array parameter');
             }
-            options.enabledHours = indexGivenHours(hours);
-            options.disabledHours = false;
+            options.enabledHourStamp = indexGivenHourStamp(hours);
+            options.disabledHourStamp = false;
             if (options.useCurrent && !options.keepInvalid) {
                 var tries = 0;
                 while (!isValid(date, 'h')) {
@@ -2628,8 +2628,8 @@
         debug: false,
         allowInputToggle: false,
         disabledTimeIntervals: false,
-        disabledHours: false,
-        enabledHours: false,
+        disabledHourStamp: false,
+        enabledHourStamp: false,
         viewDate: false
     };
 
