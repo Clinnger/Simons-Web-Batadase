@@ -80,11 +80,17 @@ namespace WebClient_Commentor.Controllers
 
         public ActionResult Video_stream()
         {
+            
+
             return View();
         }
 
         public ActionResult KameraOversigt()
         {
+            DBAccessVehicles dbcars = new DBAccessVehicles();
+            List<Vehicle> carsBy7Latest = dbcars.Get7LatestVehicles();
+            ViewBag.HEYHEYSIMON = carsBy7Latest;
+
             return View();
         }
 
