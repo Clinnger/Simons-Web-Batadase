@@ -29,8 +29,52 @@ namespace WebClient_Commentor.Controllers
 
             DBAccessVehicles dbvehicles = new DBAccessVehicles();
             List<Vehicle> vehiclesToDisplay = dbvehicles.getAllVehicles();
-            Dashboard();
-            
+            IEnumerable<int> VehicleAmount = null;
+            IEnumerable<string> HourStamp = null;
+            string DateStamp = null;
+
+            List<Vehicle> vehiclesByDate = dbvehicles.GetAllVehiclesByLatestDate();
+            List<Vehicle> vehiclesBy7Latest = dbvehicles.Get7LatestVehicles();
+            List<String> Hours = new List<String>();
+
+            //måske til senere.
+            //var VehicleAmount = vehicles.Select(x => x.VehicleAmount).OrderBy(x => x).ToArray()
+            int Amount = 0;
+
+            if (vehiclesByDate != null)
+            {
+                VehicleAmount = SelectVehicleAmount(vehiclesByDate);
+                HourStamp = SelectHourStamp(vehiclesByDate);
+                DateStamp = vehiclesByDate[vehiclesByDate.Count - 1].DateStamp;
+                foreach (var item in HourStamp)
+                {
+                    Hours.Add(item);
+                }
+                foreach (var item in DateStamp)
+                {
+                    Amount++;
+                }
+            }
+            else
+            {
+                VehicleAmount = SelectVehicleAmount(vehiclesBy7Latest);
+                HourStamp = SelectHourStamp(vehiclesBy7Latest);
+                DateStamp = vehiclesBy7Latest[vehiclesBy7Latest.Count - 1].DateStamp;
+                foreach (var item in HourStamp)
+                {
+                    Hours.Add(item);
+                }
+                foreach (var item in DateStamp)
+                {
+                    Amount++;
+                }
+            }
+            ViewBag.CARCOUNT = VehicleAmount;
+            ViewBag.CURRENTHOUR = Hours;
+            ViewBag.DateStamp = DateStamp;
+            ViewBag.AMOUNT = Amount;
+            ViewBag.LOGGEDIN = false;
+
             return View(vehiclesToDisplay);
         }
 
@@ -156,60 +200,6 @@ namespace WebClient_Commentor.Controllers
                 index++;
             }
             return HourAndDate;
-        }
-
-
-
-        public ActionResult Dashboard()
-        {
-            IEnumerable<int> VehicleAmount = null;
-            IEnumerable<string> HourStamp = null;
-            string DateStamp = null;
-            DBAccessVehicles dbvehicles = new DBAccessVehicles();
-
-            List<Vehicle> vehiclesByDate = dbvehicles.GetAllVehiclesByLatestDate();
-            List<Vehicle> vehiclesBy7Latest = dbvehicles.Get7LatestVehicles();
-            List<String> Hours = new List<String>();
-
-            //måske til senere.
-            //var VehicleAmount = vehicles.Select(x => x.VehicleAmount).OrderBy(x => x).ToArray()
-            int Amount = 0;
-
-            if (vehiclesByDate != null)
-            {
-                VehicleAmount = SelectVehicleAmount(vehiclesByDate);
-                HourStamp = SelectHourStamp(vehiclesByDate);
-                DateStamp = vehiclesByDate[vehiclesByDate.Count - 1].DateStamp;
-                foreach (var item in HourStamp)
-                {
-                    Hours.Add(item);
-                }
-                foreach (var item in DateStamp)
-                {
-                    Amount++;
-                }
-            }
-            else
-            {
-                VehicleAmount = SelectVehicleAmount(vehiclesBy7Latest);
-                HourStamp = SelectHourStamp(vehiclesBy7Latest);
-                DateStamp = vehiclesBy7Latest[vehiclesBy7Latest.Count - 1].DateStamp;
-                foreach (var item in HourStamp)
-                {
-                    Hours.Add(item);
-                }
-                foreach (var item in DateStamp)
-                {
-                    Amount++;
-                }
-            }
-            ViewBag.CARCOUNT = VehicleAmount;
-            ViewBag.CURRENTHOUR = Hours;
-            ViewBag.DateStamp = DateStamp;
-            ViewBag.AMOUNT = Amount;
-            ViewBag.LOGGEDIN = false;
-
-            return View();
         }
     }
 }
