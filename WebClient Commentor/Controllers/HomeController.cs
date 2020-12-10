@@ -43,8 +43,8 @@ namespace WebClient_Commentor.Controllers
 
         public ActionResult KameraOversigt()
         {
-            DBAccessCars dbcars = new DBAccessCars();
-            List<Cars> carsBy7Latest = dbcars.Get7LatestCars();
+            DBAccessVehicles dbcars = new DBAccessVehicles();
+            List<Vehicle> carsBy7Latest = dbcars.Get7LatestVehicles();
             ViewBag.HEYHEYSIMON = carsBy7Latest;
 
             return View();
