@@ -90,7 +90,7 @@ namespace WebClient_Commentor.Controllers
         public ActionResult KameraOversigt()
         {
             DBAccessVehicles dbcars = new DBAccessVehicles();
-            Vehicle LatestCar = dbcars.Get1LatestVehicles();
+            Vehicle LatestCar = dbcars.GetLatestVehicles();
             ViewBag.HEYHEYSIMON = LatestCar.VehicleAmount;
 
             return View();

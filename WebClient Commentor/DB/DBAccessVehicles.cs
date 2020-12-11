@@ -663,7 +663,7 @@ namespace WebClient_Commentor.DB
             return foundVehicles;
         }
 
-        public Vehicle Get1LatestVehicles()
+        public Vehicle GetLatestVehicles()
         {
             
             string queryString = "WITH SortedOne AS (SELECT TOP 1 Vehicle.VehicleId, Vehicle.TypeName, Vehicle.VehicleAmount, Vehicle.Feed, Vehicle.DateStamp, Vehicle.WeekNumber, Vehicle.HourStamp from Vehicle ORDER BY VehicleId DESC) SELECT * FROM SortedOne ORDER BY VehicleId";
