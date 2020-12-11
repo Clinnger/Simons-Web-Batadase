@@ -149,6 +149,9 @@
                 else if (method == "SortBetweenWeeks") {
                     check = true;
                 }
+                else if (method == "GenerateTestDataVehicles") {
+                    check = true;
+                }
                 return check;
             }
 
@@ -322,6 +325,11 @@
                     <br>
                     <input type="hidden" value="Slet" id="btnSlet"
                            onclick="location.href='@Url.Action("DeleteFromDb", "Home")?deleteText=' + document.getElementById('txtDelete').value; return false;" />
+                    <br />
+                    <br>
+                    <input type="button" value="Genere Test Data" onclick="loop(massPopChart, Amount, 'GenerateTestDataVehicles')" />
+
+
                 </div>
             </div>
         </div>
