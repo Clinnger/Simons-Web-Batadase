@@ -415,5 +415,31 @@ namespace WebClient_Commentor.DB
             foundVehicles = new Vehicle(tempVehicleAmount, tempdatestamp, "");
             return foundVehicles;
         }
+
+        public Vehicle Get1LatestVehicles()
+        {
+            
+            string queryString = "WITH SortedOne AS (SELECT TOP 1 Vehicle.VehicleId, Vehicle.TypeName, Vehicle.VehicleAmount, Vehicle.Feed, Vehicle.DateStamp, Vehicle.WeekNumber, Vehicle.HourStamp from Vehicle ORDER BY VehicleId DESC) SELECT * FROM SortedOne ORDER BY VehicleId";
+            Vehicle emptyVehicle = new Vehicle(0, 0, "Start", "");
+            
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlCommand readCommand = new SqlCommand(queryString, con))
+            {
+                con.Open();
+
+                SqlDataReader vehiclesReader = readCommand.ExecuteReader();
+                while (vehiclesReader.Read())
+                {
+                    emptyVehicle.VehicleAmount = vehiclesReader.GetInt32(vehiclesReader.GetOrdinal("VehicleAmount"));
+                    emptyVehicle.DateStamp = vehiclesReader.GetString(vehiclesReader.GetOrdinal("DateStamp"));
+                    emptyVehicle.HourStamp = vehiclesReader.GetString(vehiclesReader.GetOrdinal("HourStamp"));
+
+                }
+   
+            }
+            return emptyVehicle;
+        }
+
     }
 }

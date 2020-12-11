@@ -41,22 +41,20 @@
         const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright%22%3EOpenStreetMap</a> contributors';
         const tiles = L.tileLayer(tileUrl, { attribution });
         tiles.addTo(mymap);
-
-        var feed1 = [57.03096, 9.97221]
-        
+       
 
         var mapMarkers = [
-            [57.03096, 9.97221, videoPlay, "<br>Kigger mod syd"],
-            [57.05262, 9.9176, videoPlay2, "<br>Kigger mod syd-øst"],
-            [57.04694, 9.93448, videoPlay3, "<br>Kigger mod X"], //Placeholder her, erstat med ny videoPlay og text.
-            [57.0424, 9.9306, videoPlay5, "<br>Kigger mod X"], //Placeholder her, erstat med ny videoPlayX og text.
-            [57.0426, 9.9182, videoPlay3, "<br>Kigger mod X"], //Placeholder her, erstat med ny videoPlayX og text.
-            [57.0468, 9.9142, videoPlay3, "<br>Kigger mod X"], //Placeholder her, erstat med ny videoPlayX og text.
-            [57.0411, 9.9105, videoPlay3, "<br>Kigger mod X"], //Placeholder her, erstat med ny videoPlayX og text.    X erstattes med et tal.
-            [57.0392, 9.9211, videoPlay3, "<br>Kigger mod X"], //Placeholder her, erstat med ny videoPlayX og text.
-            [57.0377, 9.9314, videoPlay3, "<br>Kigger mod X"], //Placeholder her, erstat med ny videoPlayX og text.
-            [57.0399, 9.9461, videoPlay3, "<br>Kigger mod X"], //Placeholder her, erstat med ny videoPlayX og text.
-            [57.0337, 9.9543, videoPlay4, "<br>Kigger mod X"], //Placeholder her, erstat med ny videoPlayX og text.
+            [57.03096, 9.97221, videoPlay, "Humlebakken, 9000 Aalborg"],
+            [57.05262, 9.9176, videoPlay2, "Strandvejen 10, 9000 Aalborg"],
+            [57.04694, 9.93448, videoPlay3, "Musikkens Pl, 9000 Aalborg"], //Placeholder her, erstat med ny videoPlay og text.
+            [57.0424, 9.9306, videoPlay5, "Jyllandsgade, 9000 Aalborg"], //Placeholder her, erstat med ny videoPlayX og text.
+            [57.0426, 9.9182, videoPlay3, "John F. Kennedys Pl, 9000 Aalborg"], //Placeholder her, erstat med ny videoPlayX og text.
+            [57.0468, 9.9142, videoPlay3, "Prinsensgade, 9000 Aalborg"], //Placeholder her, erstat med ny videoPlayX og text.
+            [57.0411, 9.9105, videoPlay3, "Kong Christians Alle"], //Placeholder her, erstat med ny videoPlayX og text.    X erstattes med et tal.
+            [57.0392, 9.9211, videoPlay3, "Dag Hammarskjølds Gade, 9000 Aalborg"], //Placeholder her, erstat med ny videoPlayX og text.
+            [57.0377, 9.9314, videoPlay3, "Østre Alle 97, 9000 Aalborg"], //Placeholder her, erstat med ny videoPlayX og text.
+            [57.0399, 9.9461, videoPlay3, "Placeholder"], //Placeholder her, erstat med ny videoPlayX og text.
+            [57.0337, 9.9543, videoPlay4, "Humlebakken, 9000 Aalborg"], //Placeholder her, erstat med ny videoPlayX og text.
         ]
 
         var markers = new L.markerClusterGroup();
@@ -75,11 +73,11 @@
 
 
         //var CarNumber = CarCount.length();
-        var CarList =@Html.Raw(Json.Encode(ViewBag.HEYHEYSIMON));
+        var CarAmount =@Html.Raw(Json.Encode(ViewBag.HEYHEYSIMON));
         
 
-        var CarCount = CarList.length;
-        alert(CarCount);
+       
+        //alert(CarAmount);
 
         var circle_options = {
             color: '#33cc33',      // Stroke color
@@ -106,14 +104,72 @@
         };
 
 
-        var circle_one = L.circle(feed1, 20, circle_options).addTo(mymap);
 
-        if (CarCount > 4 && CarCount < 50) {
-            circle_one = L.circle(feed1, 20, circle_options2).addTo(mymap);
+        //var circle_one = L.circle(feed1, 20, circle_options).addTo(mymap);
+        //var circle_two = L.circle(feed2, 20, circle_options).addTo(mymap);
+        //var circle_three = L.circle(feed3, 20, circle_options).addTo(mymap);
+        //var circle_four = L.circle(feed4, 20, circle_options).addTo(mymap);
+
+        var circles = [
+            [57.03096, 9.97221],
+            [57.05262, 9.9176],
+            [57.04694, 9.93448],
+            [57.0424, 9.9306],
+            [57.0426, 9.9182],
+            [57.0468, 9.9142],
+            [57.0411, 9.9105],
+            [57.0392, 9.9211],
+            [57.0377, 9.9314],
+            [57.0399, 9.9461],
+            [57.0337, 9.9543], 
+        ]
+
+
+
+
+        var circlegrp = new L.layerGroup();
+        //alert(circles.length);
+        for (var i = 0; i < circles.length; i++) {
+            //new L.circle(circles[i], 20, circle_option).addTo(mymap);
+            new L.circle(circles[i], 35, {
+                color: 'green',
+                fillColor: 'green',
+                fillOpacity: 0.6
+            }).addTo(mymap);
+            if (CarAmount > 4 && CarAmount < 50) {
+                new L.circle(circles[i], 35, {
+                    color: 'yellow',
+                    fillColor: 'yellow',
+                    fillOpacity: 0.6
+                }).addTo(mymap);
+            }
+            if (CarAmount > 50) {
+                new L.circle(circles[i], 35, {
+                    color: 'red',
+                    fillColor: 'red',
+                    fillOpacity: 0.6
+                }).addTo(mymap);
+            }
+
         }
-        if (CarCount > 50) {
-            circle_one = L.circle(feed1, 20, circle_options3).addTo(mymap);
-        }
+        //mymap.addTo(circlegrp);
+
+        //mymap.addLayer(circlestwo);
+        //    if (CarAmount > 4 && CarAmount < 50) {
+               
+                 
+        //    }
+        //    if (CarAmount > 50) {
+
+        //        circle_one = L.circle(feed1, 20, circle_options3).addTo(mymap);
+        //}
+        
+       
+
+
+
+
+
 
 
     </script>
