@@ -90,38 +90,40 @@ namespace WebClient_Commentor.DB
         }
 
         //Denne metode vælger alle køretøjer, hvor der er angivet en start time, slut time, start dato, og slut dato, og sorter derefter.
-        public List<Vehicle> getSortedVehiclesDayAndHours(string StartHour, string EndHour, string StartDate, string EndDate)
+        public List<Vehicle> getSortedVehiclesDayAndHours(string StartHour, string EndHour, string StartDate, string EndDate, string VehicleType)
         {
             List<Vehicle> foundVehicles = null;
             Vehicle readVehicles = null;
             Vehicle emptyVehicle = new Vehicle(0, 0, "Start", "");
-            string queryString = "SELECT Vehicle.VehicleId, Vehicle.TypeName, Vehicle.VehicleAmount, Vehicle.Feed, Vehicle.DateStamp, Vehicle.WeekNumber, Vehicle.HourStamp from Vehicle WHERE Vehicle.HourStamp BETWEEN @StartHour AND @EndHour AND Vehicle.DateStamp BETWEEN @StartDate AND @EndDate";
+            string queryString = "SELECT Vehicle.VehicleId, Vehicle.TypeName, Vehicle.VehicleAmount, Vehicle.Feed, Vehicle.DateStamp, Vehicle.WeekNumber, Vehicle.HourStamp from Vehicle WHERE Vehicle.HourStamp BETWEEN @StartHour AND @EndHour AND Vehicle.DateStamp BETWEEN @StartDate AND @EndDate AND Vehicle.TypeName = @VehicleType";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             using (SqlCommand readCommand = new SqlCommand(queryString, con))
             {
-                    SqlParameter AddStartHour = new SqlParameter("@StartHour", StartHour);
-                    readCommand.Parameters.Add(AddStartHour);
-                    SqlParameter AddEndHour = new SqlParameter("@EndHour", EndHour);
-                    readCommand.Parameters.Add(AddEndHour);
-                    SqlParameter AddStartDate = new SqlParameter("@StartDate", StartDate);
-                    readCommand.Parameters.Add(AddStartDate);
-                    SqlParameter AddEndDate = new SqlParameter("@EndDate", EndDate);
-                    readCommand.Parameters.Add(AddEndDate);
-                    con.Open();
+                SqlParameter AddStartHour = new SqlParameter("@StartHour", StartHour);
+                readCommand.Parameters.Add(AddStartHour);
+                SqlParameter AddEndHour = new SqlParameter("@EndHour", EndHour);
+                readCommand.Parameters.Add(AddEndHour);
+                SqlParameter AddStartDate = new SqlParameter("@StartDate", StartDate);
+                readCommand.Parameters.Add(AddStartDate);
+                SqlParameter AddEndDate = new SqlParameter("@EndDate", EndDate);
+                readCommand.Parameters.Add(AddEndDate);
+                SqlParameter AddVehicleType = new SqlParameter("@VehicleType", VehicleType);
+                readCommand.Parameters.Add(AddVehicleType);
+                con.Open();
 
-                    SqlDataReader vehiclesReader = readCommand.ExecuteReader();
+                SqlDataReader vehiclesReader = readCommand.ExecuteReader();
 
-                    if (vehiclesReader.HasRows)
+                if (vehiclesReader.HasRows)
+                {
+                    foundVehicles = new List<Vehicle>();
+                    foundVehicles.Add(emptyVehicle);
+                    while (vehiclesReader.Read())
                     {
-                        foundVehicles = new List<Vehicle>();
-                        foundVehicles.Add(emptyVehicle);
-                        while (vehiclesReader.Read())
-                        {
-                            readVehicles = GetVehiclesFromReader(vehiclesReader, true);
-                            foundVehicles.Add(readVehicles);
-                        }
+                        readVehicles = GetVehiclesFromReader(vehiclesReader, true);
+                        foundVehicles.Add(readVehicles);
                     }
+                }
             }
             return foundVehicles;
         }
@@ -230,7 +232,7 @@ namespace WebClient_Commentor.DB
             }
             return vehicleId;
         }
-        //Denne metode får alle biler, som sådan set nu er alle køretøjer som den henter fra seneste dato.
+        //Denne metode får alle køretøjer, som sådan set nu er alle køretøjer som den henter fra seneste dato.
         public List<Vehicle> GetAllVehiclesByLatestDate()
         {
             List<Vehicle> foundVehicles = null;
@@ -261,12 +263,41 @@ namespace WebClient_Commentor.DB
             return foundVehicles;
         }
 
-        //Denne metode henter de 7 seneste timer med biler.
+        //Denne metode henter de 7 seneste timer med køretøjer.
         public List<Vehicle> Get7LatestVehicles()
         {
             List<Vehicle> foundVehicles = null;
             Vehicle readVehicles = null;
             string queryString = "WITH SortedSeven AS (SELECT TOP 7 Vehicle.VehicleId, Vehicle.TypeName, Vehicle.VehicleAmount, Vehicle.Feed, Vehicle.DateStamp, Vehicle.WeekNumber, Vehicle.HourStamp from Vehicle ORDER BY VehicleId DESC) SELECT * FROM SortedSeven ORDER BY VehicleId";
+            Vehicle emptyVehicle = new Vehicle(0, 0, "Start", "");
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlCommand readCommand = new SqlCommand(queryString, con))
+            {
+                con.Open();
+
+                SqlDataReader vehiclesReader = readCommand.ExecuteReader();
+
+                if (vehiclesReader.HasRows)
+                {
+                    foundVehicles = new List<Vehicle>();
+                    foundVehicles.Add(emptyVehicle);
+                    while (vehiclesReader.Read())
+                    {
+                        readVehicles = GetVehiclesFromReader(vehiclesReader, true);
+                        foundVehicles.Add(readVehicles);
+                    }
+                }
+            }
+            return foundVehicles;
+        }
+
+        //Denne metode henter den seneste time med køretøjer.
+        public List<Vehicle> Get1LatestVehicles()
+        {
+            List<Vehicle> foundVehicles = null;
+            Vehicle readVehicles = null;
+            string queryString = "WITH SortedOne AS (SELECT TOP 1 Vehicle.VehicleId, Vehicle.TypeName, Vehicle.VehicleAmount, Vehicle.Feed, Vehicle.DateStamp, Vehicle.WeekNumber, Vehicle.HourStamp from Vehicle ORDER BY VehicleId DESC) SELECT * FROM SortedOne ORDER BY VehicleId";
             Vehicle emptyVehicle = new Vehicle(0, 0, "Start", "");
 
             using (SqlConnection con = new SqlConnection(connectionString))

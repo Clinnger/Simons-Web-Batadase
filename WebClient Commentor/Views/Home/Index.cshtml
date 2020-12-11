@@ -30,7 +30,9 @@
         <div class="container">
             <canvas id="myChart"></canvas>
         </div>
+        
         <script>
+
         var isAuth = false;
             var Amount = 1000;
             var loggedin = @Html.Raw(Json.Encode(ViewBag.LOGGEDIN));
@@ -48,7 +50,7 @@
                 hoverBorderColor: '#000'
             }]
         };
-        
+
         var CurrentDate =@Html.Raw(Json.Encode(ViewBag.CURRENTDATE));
         var optionsData = {
             title: {
@@ -151,78 +153,86 @@
             }
 
             function loop(chart, index, method) {
-            var countSelect;
-            var hourSelect;
-            var str = document.getElementById("startTime").value;
-            var str2 = document.getElementById("slutTime").value;
-            var str3 = document.getElementById("datetimepicker1").value;
-            var str4 = document.getElementById("datetimepicker2").value;
-            if (checkIfEmpty(method, str, str2, str3, str4)) {
+                var countSelect;
+                var hourSelect;
+                var str = document.getElementById("startTime").value;
+                var str2 = document.getElementById("slutTime").value;
+                var str3 = document.getElementById("datetimepicker1").value;
+                var str4 = document.getElementById("datetimepicker2").value;
+                var str5 = $(".custom-control-input:checked").val();
 
-            $.ajax({
-                type: 'GET',
-                dataType: 'json',
-                async: false,
-                url: '/Home/'+ method +'',
-                data: { startHour: str, endHour: str2, startDate: str3, endDate: str4 },
-                success: function (Data) {
-                    count = Data.countSelect;
-                    hours = Data.hourSelect;
-                    days = Data.daySelect
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                }
-            });
-            countSelect = count;
-            hourSelect = hours;
-            daySelect = days;
-            var Amount = 100;
-            while (Amount != -1) {
-                removeData(chart, Amount);
-                Amount--;
-            }
+                
 
-            var count = Object.keys(hourSelect).length;
+                alert(str5);
+                if (checkIfEmpty(method, str, str2, str3, str4, str5)) {
 
-            var Amount2 = 0;
-            while (Amount2 != count) {
-                addData(chart, Amount2, hourSelect, countSelect);
-                Amount2++;
-            }
-
-            var Amount3 = 0;
-                    while (Amount2 != count) {
-                        addData2(chart, Amount2, Amount3, hourSelect, countselect);
-                        Amount2++;
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'json',
+                    async: false,
+                    url: '/Home/'+ method +'',
+                    data: { startHour: str, endHour: str2, startDate: str3, endDate: str4, vehicleType: str5 },
+                    success: function (Data) {
+                        count = Data.countSelect;
+                        hours = Data.hourSelect;
+                        days = Data.daySelect;
+                        vehiType = Data.vehicleSelect;
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
                     }
+                });
+                countSelect = count;
+                hourSelect = hours;
+                daySelect = days;
+                vehicleSelect = vehiType;
+                var Amount = 100;
+                while (Amount != -1) {
+                    removeData(chart, Amount);
+                    Amount--;
+                }
+
+                var count = Object.keys(hourSelect).length;
+
+                var Amount2 = 0;
+                while (Amount2 != count) {
+                    addData(chart, Amount2, hourSelect, countSelect);
+                    Amount2++;
+                }
+
+                var Amount3 = 0;
+                        while (Amount2 != count) {
+                            addData2(chart, Amount2, Amount3, hourSelect, countselect);
+                            Amount2++;
+                        }
+                }
+                else {
+                    alert("Du mangler at udfylde i timer og eller dato");
+                }
             }
-            else {
-                alert("Du mangler at udfylde i timer og eller dato");
+
+            function addData(chart, index, table1, table2) {
+                chart.data.labels.push(table1[index]);
+                chart.data.datasets.forEach((dataset) => {
+                    dataset.data.push(table2[index]);
+                });
+                chart.update();
             }
-        }
 
-        function addData(chart, index, table1, table2) {
-            chart.data.labels.push(table1[index]);
-            chart.data.datasets.forEach((dataset) => {
-                dataset.data.push(table2[index]);
-            });
-            chart.update();
-        }
+            function addData2(chart, index, table3, table4) {
+                chart.data.labels.push(table3[index]);
+                chart.data.datasets.forEach((dataset) => {
+                    dataset.data.push(table4[index]);
+                })
+                chart.update();
+            }
 
-        function addData2(chart, index, table3, table4) {
-            chart.data.labels.push(table3[index]);
-            chart.data.datasets.forEach((dataset) => {
-                dataset.data.push(table4[index]);
-            })
-            chart.update();
-        }
+            function removeData(chart, index) {
+                chart.data.labels.splice(index, 1);
+                chart.data.datasets[0].data.splice(index, 1);
+                chart.update();
+            }
 
-        function removeData(chart, index) {
-            chart.data.labels.splice(index, 1);
-            chart.data.datasets[0].data.splice(index, 1);
-            chart.update();
-        }
-
+            
         </script>
         <style type="text/css">
             .centerDiv {
@@ -251,9 +261,15 @@
                     </div>
                     <br>
                     <div class="pull-left" style="margin-right:5px">
-                        <input type="button" value="Sorter Dato & Timer" onclick="loop(massPopChart, Amount, 'SortBetweenDaysAndHours')" />
-                        <input type="button" value="Sorter Efter Dage" onclick="loop(massPopChart, Amount, 'SortBetweenDays')">
-                        <input type="button" value="Sorter Efter Uger" onclick="loop(massPopChart, Amount, 'SortBetweenWeeks')" />
+                        <form>
+                            <input type="radio" class="custom-control-input" name="TYPENAME" value="Car">Biler
+                            <input type="radio" class="custom-control-input" name="TYPENAME" value="Truck">Lastbiler
+                            <input type="radio" class="custom-control-input" name="TYPENAME" value="Motorcycle">Motorcykler
+                            <input type="radio" class="custom-control-input" name="TYPENAME" value="Cars">køretøjer
+                        </form>
+                        <input class="sortHourandDays" type="button" value="Sorter Dato & Timer" onclick="loop(massPopChart, Amount, 'SortBetweenDaysAndHours')" />
+                        <input class="sortDays" type="button" value="Sorter Efter Dage" onclick="loop(massPopChart, Amount, 'SortBetweenDays')">
+                        <input class="sortWeeks" type="button" value="Sorter Efter Uger" onclick="loop(massPopChart, Amount, 'SortBetweenWeeks')" />
                     </div>
                     <!--<input type="button" value="Sorter Time" onclick="loop(massPopChart, Amount, 'SortBetweenHours')">-->
                     <br><br>

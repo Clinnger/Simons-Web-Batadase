@@ -31,6 +31,7 @@ namespace WebClient_Commentor.Controllers
             List<Vehicle> vehiclesToDisplay = dbvehicles.getAllVehicles();
             IEnumerable<int> VehicleAmount = null;
             IEnumerable<string> HourStamp = null;
+            string TypeName = null;
             string DateStamp = null;
 
             List<Vehicle> vehiclesByDate = dbvehicles.GetAllVehiclesByLatestDate();
@@ -74,6 +75,7 @@ namespace WebClient_Commentor.Controllers
             ViewBag.DateStamp = DateStamp;
             ViewBag.AMOUNT = Amount;
             ViewBag.LOGGEDIN = false;
+            ViewBag.VEHICLETYPE = TypeName;
 
             return View(vehiclesToDisplay);
         }
@@ -88,8 +90,8 @@ namespace WebClient_Commentor.Controllers
         public ActionResult KameraOversigt()
         {
             DBAccessVehicles dbcars = new DBAccessVehicles();
-            List<Vehicle> carsBy7Latest = dbcars.Get7LatestVehicles();
-            ViewBag.HEYHEYSIMON = carsBy7Latest;
+            List<Vehicle> carsBy1Latest = dbcars.Get1LatestVehicles();
+            ViewBag.TALADVARSEL = carsBy1Latest;
 
             return View();
         }
@@ -128,13 +130,14 @@ namespace WebClient_Commentor.Controllers
         }
 
 
-        public JsonResult SortBetweenDaysAndHours(string startHour, string endHour, string startDate, string endDate)
+        public JsonResult SortBetweenDaysAndHours(string startHour, string endHour, string startDate, string endDate, string vehicleType)
         {
-            List<Vehicle> vehicles = dbVehicles.getSortedVehiclesDayAndHours(startHour, endHour, startDate, endDate);
+            List<Vehicle> vehicles = dbVehicles.getSortedVehiclesDayAndHours(startHour, endHour, startDate, endDate, vehicleType);
             IEnumerable<int> selectAmount = SelectVehicleAmount(vehicles);
             IEnumerable<string> selectHour = SelectHourStamp(vehicles);
             IEnumerable<string> selectDay = SelectCurrentDays(vehicles);
-            return Json(new { countSelect = selectAmount, hourSelect = selectHour, daySelect = selectDay }, JsonRequestBehavior.AllowGet);
+            IEnumerable<string> selectVehiType = SelectVehicleType(vehicles);
+            return Json(new { countSelect = selectAmount, hourSelect = selectHour, daySelect = selectDay, vehicleSelect = selectVehiType }, JsonRequestBehavior.AllowGet);
             
         }
         [Authorize]
@@ -188,6 +191,12 @@ namespace WebClient_Commentor.Controllers
                 index++;
             }
             return HourAndDate;
+        }
+
+        public IEnumerable<string> SelectVehicleType(List<Vehicle> vehicles)
+        {
+            IEnumerable<string> VehicleTypeName = vehicles.Select(x => x.TypeName);
+            return VehicleTypeName;
         }
 
         public IEnumerable<string> SelectCurrentWeekNumber(List<Vehicle> vehicles)

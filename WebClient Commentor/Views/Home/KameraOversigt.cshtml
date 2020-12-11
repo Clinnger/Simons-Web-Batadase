@@ -27,7 +27,7 @@
     </style>
     <script>
         const mymap = L.map('mapid').setView([57.03096, 9.97221], 10);
-        
+
 
         var videoPlay = '<iframe width="250" height="250" src="https://www.youtube.com/embed/0AK-KYbB0Po?&autoplay=1&loop=1&&playlist=0AK-KYbB0Po" frameborder="0" allow="accelerometer; autoplay=1; loop=1; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
         var videoPlay2 = '<iframe width="250" height="250" src="https://www.youtube.com/embed/GuEQwyKtvow?&autoplay=1&loop=1&playlist=GuEQwyKtvow" frameborder="0" allow="accelerometer; autoplay=1; loop=1; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'; //Placeholder
@@ -42,9 +42,6 @@
         const tiles = L.tileLayer(tileUrl, { attribution });
         tiles.addTo(mymap);
 
-        var feed1 = [57.03096, 9.97221]
-        
-
         var mapMarkers = [
             [57.03096, 9.97221, videoPlay, "<br>Kigger mod syd"],
             [57.05262, 9.9176, videoPlay2, "<br>Kigger mod syd-øst"],
@@ -57,7 +54,7 @@
             [57.0377, 9.9314, videoPlay3, "<br>Kigger mod X"], //Placeholder her, erstat med ny videoPlayX og text.
             [57.0399, 9.9461, videoPlay3, "<br>Kigger mod X"], //Placeholder her, erstat med ny videoPlayX og text.
             [57.0337, 9.9543, videoPlay4, "<br>Kigger mod X"], //Placeholder her, erstat med ny videoPlayX og text.
-        ]
+        ];
 
         var markers = new L.markerClusterGroup();
 
@@ -65,19 +62,14 @@
             var a = mapMarkers[i];
             var title = a[2];
             var text = a[3];
-            var marker = L.marker(new L.LatLng(a[0], a[1]), { title: title }, {text: text});
+            var marker = L.marker(new L.LatLng(a[0], a[1]), { title: title }, { text: text });
             marker.bindPopup(title + text);
             markers.addLayer(marker);
         }
 
         mymap.addLayer(markers);
 
-
-
-        //var CarNumber = CarCount.length();
-        var CarList =@Html.Raw(Json.Encode(ViewBag.HEYHEYSIMON));
-        
-
+        var CarList = @Html.Raw(Json.Encode(ViewBag.TALADVARSEL));
         var CarCount = CarList.length;
         alert(CarCount);
 
@@ -85,7 +77,7 @@
             color: '#33cc33',      // Stroke color
             opacity: 1,         // Stroke opacity
             weight: 10,         // Stroke weight
-              // Fill color
+            // Fill color
             fillOpacity: 0.6    // Fill opacity
         };
 
@@ -101,20 +93,17 @@
             color: '#ff0000',      // Stroke color
             opacity: 1,         // Stroke opacity
             weight: 10,         // Stroke weight
-              // Fill color
+            // Fill color
             fillOpacity: 0.6    // Fill opacity
         };
 
-
-        var circle_one = L.circle(feed1, 20, circle_options).addTo(mymap);
+        var circle_one = L.circle(57.03096, 9.97221, 20, circle_options).addTo(mymap);
 
         if (CarCount > 4 && CarCount < 50) {
-            circle_one = L.circle(feed1, 20, circle_options2).addTo(mymap);
-        }
+            circle_one = L.circle(57.03096, 9.97221, 20, circle_options2).addTo(mymap);
+        };
         if (CarCount > 50) {
-            circle_one = L.circle(feed1, 20, circle_options3).addTo(mymap);
-        }
-
-
+            circle_one = L.circle(57.03096, 9.97221, 20, circle_options3).addTo(mymap);
+        };
     </script>
 </body>
