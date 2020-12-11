@@ -87,7 +87,6 @@ namespace WebClient_Commentor.Controllers
             return Json(new { countSelect = selectAmount, hourSelect = selectHour, daySelect = selectDay }, JsonRequestBehavior.AllowGet);
             
         }
-        [Authorize]
         public ActionResult DeleteFromDb(string deleteText = "")
         {
             int toParse = Int32.Parse(deleteText);
@@ -95,6 +94,28 @@ namespace WebClient_Commentor.Controllers
             dbvehicles.DeleteFromDB(toParse);
 
             return RedirectToAction("Index");
+        }
+
+        public JsonResult GenerateTestDataVehicles()
+        {
+            DBAccessVehicles testData = new DBAccessVehicles();
+            testData.GenerateTestDataVehicles();
+            string startDate = "10 Dec 2020";
+            string endDate = "11 Dec 2020";
+            List<Vehicle> vehicle = dbVehicles.Get7LatestVehicles();
+            IEnumerable<int> selectAmount = SelectVehicleAmount(vehicle);
+            IEnumerable<string> selectHour = SelectHourStamp(vehicle);
+            IEnumerable<string> selectDay = SelectCurrentDays(vehicle);
+            return Json(new { countSelect = selectAmount, hourSelect = selectHour, daySelect = selectDay }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult FindVehicleType()
+        {
+
+            int vehicles = dbVehicles.FindVehicleType("Car");
+            
+            return Json(new { test = vehicles }, JsonRequestBehavior.AllowGet);
+
         }
 
         public IEnumerable<int> SelectVehicleAmount(List<Vehicle> vehicles)

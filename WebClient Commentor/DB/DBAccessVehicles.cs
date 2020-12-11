@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Web.ModelBinding;
 using System.Transactions;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace WebClient_Commentor.DB
 {
@@ -100,28 +101,28 @@ namespace WebClient_Commentor.DB
             using (SqlConnection con = new SqlConnection(connectionString))
             using (SqlCommand readCommand = new SqlCommand(queryString, con))
             {
-                    SqlParameter AddStartHour = new SqlParameter("@StartHour", StartHour);
-                    readCommand.Parameters.Add(AddStartHour);
-                    SqlParameter AddEndHour = new SqlParameter("@EndHour", EndHour);
-                    readCommand.Parameters.Add(AddEndHour);
-                    SqlParameter AddStartDate = new SqlParameter("@StartDate", StartDate);
-                    readCommand.Parameters.Add(AddStartDate);
-                    SqlParameter AddEndDate = new SqlParameter("@EndDate", EndDate);
-                    readCommand.Parameters.Add(AddEndDate);
-                    con.Open();
+                SqlParameter AddStartHour = new SqlParameter("@StartHour", StartHour);
+                readCommand.Parameters.Add(AddStartHour);
+                SqlParameter AddEndHour = new SqlParameter("@EndHour", EndHour);
+                readCommand.Parameters.Add(AddEndHour);
+                SqlParameter AddStartDate = new SqlParameter("@StartDate", StartDate);
+                readCommand.Parameters.Add(AddStartDate);
+                SqlParameter AddEndDate = new SqlParameter("@EndDate", EndDate);
+                readCommand.Parameters.Add(AddEndDate);
+                con.Open();
 
-                    SqlDataReader vehiclesReader = readCommand.ExecuteReader();
+                SqlDataReader vehiclesReader = readCommand.ExecuteReader();
 
-                    if (vehiclesReader.HasRows)
+                if (vehiclesReader.HasRows)
+                {
+                    foundVehicles = new List<Vehicle>();
+                    foundVehicles.Add(emptyVehicle);
+                    while (vehiclesReader.Read())
                     {
-                        foundVehicles = new List<Vehicle>();
-                        foundVehicles.Add(emptyVehicle);
-                        while (vehiclesReader.Read())
-                        {
-                            readVehicles = GetVehiclesFromReader(vehiclesReader, true);
-                            foundVehicles.Add(readVehicles);
-                        }
+                        readVehicles = GetVehiclesFromReader(vehiclesReader, true);
+                        foundVehicles.Add(readVehicles);
                     }
+                }
             }
             return foundVehicles;
         }
@@ -132,7 +133,7 @@ namespace WebClient_Commentor.DB
             Vehicle readVehicles = null;
             Vehicle emptyVehicle = new Vehicle(0, 0, "Start", "");
             string queryString = "SELECT Vehicle.DateStamp AS DateStamp, SUM(VehicleAmount) AS VehicleAmount FROM Vehicle WHERE Vehicle.DateStamp BETWEEN @StartDate AND @EndDate GROUP BY Vehicle.DateStamp";
-            using(SqlConnection con = new SqlConnection(connectionString))
+            using (SqlConnection con = new SqlConnection(connectionString))
             using (SqlCommand readCommand = new SqlCommand(queryString, con))
             {
                 SqlParameter AddStartDate = new SqlParameter("@StartDate", StartDate);
@@ -168,7 +169,7 @@ namespace WebClient_Commentor.DB
                 con.Open();
 
                 vehiclesIdToDelete = (int)readCommand.ExecuteScalar();
-                
+
             }
             return vehiclesIdToDelete;
         }
@@ -178,7 +179,7 @@ namespace WebClient_Commentor.DB
         {
             int vehiclesIdMade = 0;
             string queryString = "BEGIN TRANSACTION INSERT INTO Vehicle(TypeName, VehicleAmount, Feed, DateStamp, WeekNumber, HourStamp) VALUES('Vehicle', 150, 1, '10 Dec 2020', 50, '10'); COMMIT";
-            using(SqlConnection con = new SqlConnection(connectionString))
+            using (SqlConnection con = new SqlConnection(connectionString))
             {
                 using (SqlCommand readCommand = new SqlCommand(queryString, con))
                 {
@@ -229,6 +230,221 @@ namespace WebClient_Commentor.DB
 
             }
             return vehicleId;
+
+        }
+        public String GetLatestHourFromLatestVehicleId()
+        {
+            String vehicleId = "";
+            String queryString = "SELECT Vehicle.HourStamp from Vehicle WHERE Vehicle.VehicleId=(SELECT max(Vehicle.VehicleId) from Vehicle)";
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlCommand readCommand = new SqlCommand(queryString, con))
+            {
+                con.Open();
+
+                vehicleId = (String)readCommand.ExecuteScalar();
+
+            }
+            return vehicleId;
+        }
+
+        public int FindVehicleType(String vehicleType)
+        {
+            int count = 0;
+            DateTime now = DateTime.Now;
+            string sDate = DateTime.Today.ToString("dd MMM yyyy");
+            string oDate = sDate.Replace(sDate.Split(' ')[1][0], char.ToUpper(sDate.Split(' ')[1][0]));
+            string sHour = now.ToString("hh");
+            string queryString = "SELECT count(*) as total from Vehicle where TypeName = @vehicleType and HourStamp = @latestHour and DateStamp = @latestDate";
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlCommand readCommand = new SqlCommand(queryString, con))
+            {
+                SqlParameter AddLatestDate = new SqlParameter("@latestDate", oDate);
+                readCommand.Parameters.Add(AddLatestDate);
+                SqlParameter AddLatestHour = new SqlParameter("@latestHour", sHour);
+                readCommand.Parameters.Add(AddLatestHour);
+                SqlParameter AddVehicleType = new SqlParameter("@vehicleType", vehicleType);
+                readCommand.Parameters.Add(AddVehicleType);
+                con.Open();
+
+                count = (int)readCommand.ExecuteScalar();
+            }
+
+            return count;
+        }
+        public static int GetWeekNumber(DateTime now)
+        {
+            CultureInfo ci = CultureInfo.CurrentCulture;
+            int weekNumber = ci.Calendar.GetWeekOfYear(now, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+            return weekNumber;
+        }
+        public List<String> CreateVehicleTypeList()
+        {
+            List<String> vehicleType = new List<String>();
+            vehicleType.Add("Car");
+            vehicleType.Add("Truck");
+            vehicleType.Add("Motorcycle");
+            return vehicleType;
+        }
+        public int GetARandomAmountNumber(int min, int max)
+        {
+            Random number = new Random(Guid.NewGuid().GetHashCode());
+            int amount = number.Next(min, max);
+            return amount;
+        }
+        public void GenerateTestDataVehicles()
+        {
+            int car = FindVehicleType("Car");
+            int truck = FindVehicleType("Truck");
+            int motorcycle = FindVehicleType("Motorcycle");
+            
+            int ranNumber = GetARandomAmountNumber(0, 3);
+            List<String> vehicleTypes = CreateVehicleTypeList();
+            string selectedVehicleType = vehicleTypes[ranNumber];
+            DateTime now = DateTime.Now;
+            string sDate = DateTime.Today.ToString("dd MMM yyyy");
+            string oDate = sDate.Replace(sDate.Split(' ')[1][0], char.ToUpper(sDate.Split(' ')[1][0]));
+            string sHour = now.ToString("hh");
+            var weekNumber = GetWeekNumber(now);
+            if (car == 0)
+            {
+                int amount = GetARandomAmountNumber(1, 2001);
+                int feed = GetARandomAmountNumber(1, 11);
+                string queryString = "BEGIN TRANSACTION INSERT INTO Vehicle(TypeName, VehicleAmount, Feed, DateStamp, WeekNumber, HourStamp) VALUES('Car', @amount, @feed, @latestDate, @weekNumber, @latestHour); COMMIT";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand readCommand = new SqlCommand(queryString, con))
+                    {
+                        SqlParameter AddAmount = new SqlParameter("@amount", amount);
+                        readCommand.Parameters.Add(AddAmount);
+                        SqlParameter AddFeed = new SqlParameter("@feed", feed);
+                        readCommand.Parameters.Add(AddFeed);
+                        SqlParameter AddLatestDate = new SqlParameter("@latestDate", oDate);
+                        readCommand.Parameters.Add(AddLatestDate);
+                        SqlParameter AddWeekNumber = new SqlParameter("@weekNumber", weekNumber);
+                        readCommand.Parameters.Add(AddWeekNumber);
+                        SqlParameter AddLatestHour = new SqlParameter("@latestHour", sHour);
+                        readCommand.Parameters.Add(AddLatestHour);
+                        con.Open();
+                        readCommand.ExecuteNonQuery();
+                    }
+                }
+            }
+            else if (car != 0)
+            {
+                int amount = GetARandomAmountNumber(1, 2001);
+                int feed = GetARandomAmountNumber(1, 11);
+                string queryString = "BEGIN TRANSACTION UPDATE Vehicle SET VehicleAmount = @amount, Feed = @feed WHERE DateStamp = @latestDate AND HourStamp = @latestHour AND TypeName = 'Car'; COMMIT";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand readCommand = new SqlCommand(queryString, con))
+                    {
+                        SqlParameter AddAmount = new SqlParameter("@amount", amount);
+                        readCommand.Parameters.Add(AddAmount);
+                        SqlParameter AddFeed = new SqlParameter("@feed", feed);
+                        readCommand.Parameters.Add(AddFeed);
+                        SqlParameter AddLatestHour = new SqlParameter("@latestHour", sHour);
+                        readCommand.Parameters.Add(AddLatestHour);
+                        SqlParameter AddLatestDate = new SqlParameter("@latestDate", oDate);
+                        readCommand.Parameters.Add(AddLatestDate);
+                        con.Open();
+                        readCommand.ExecuteNonQuery();
+                    }
+                }
+            }
+            if (truck == 0)
+            {
+                int amount = GetARandomAmountNumber(1, 2001);
+                int feed = GetARandomAmountNumber(1, 11);
+                string queryString = "BEGIN TRANSACTION INSERT INTO Vehicle(TypeName, VehicleAmount, Feed, DateStamp, WeekNumber, HourStamp) VALUES('Truck', @amount, @feed, @latestDate, @weekNumber, @latestHour); COMMIT";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand readCommand = new SqlCommand(queryString, con))
+                    {
+                        SqlParameter AddAmount = new SqlParameter("@amount", amount);
+                        readCommand.Parameters.Add(AddAmount);
+                        SqlParameter AddFeed = new SqlParameter("@feed", feed);
+                        readCommand.Parameters.Add(AddFeed);
+                        SqlParameter AddLatestDate = new SqlParameter("@latestDate", oDate);
+                        readCommand.Parameters.Add(AddLatestDate);
+                        SqlParameter AddWeekNumber = new SqlParameter("@weekNumber", weekNumber);
+                        readCommand.Parameters.Add(AddWeekNumber);
+                        SqlParameter AddLatestHour = new SqlParameter("@latestHour", sHour);
+                        readCommand.Parameters.Add(AddLatestHour);
+                        con.Open();
+                        readCommand.ExecuteNonQuery();
+                    }
+                }
+            }
+            else if (truck != 0)
+            {
+                int amount = GetARandomAmountNumber(1, 2001);
+                int feed = GetARandomAmountNumber(1, 11);
+                string queryString = "BEGIN TRANSACTION UPDATE Vehicle SET VehicleAmount = @amount, Feed = @feed WHERE DateStamp = @latestDate AND HourStamp = @latestHour AND TypeName = 'Truck'; COMMIT";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand readCommand = new SqlCommand(queryString, con))
+                    {
+                        SqlParameter AddAmount = new SqlParameter("@amount", amount);
+                        readCommand.Parameters.Add(AddAmount);
+                        SqlParameter AddFeed = new SqlParameter("@feed", feed);
+                        readCommand.Parameters.Add(AddFeed);
+                        SqlParameter AddLatestHour = new SqlParameter("@latestHour", sHour);
+                        readCommand.Parameters.Add(AddLatestHour);
+                        SqlParameter AddLatestDate = new SqlParameter("@latestDate", oDate);
+                        readCommand.Parameters.Add(AddLatestDate);
+                        con.Open();
+                        readCommand.ExecuteNonQuery();
+                    }
+                }
+            }
+            if (motorcycle == 0)
+            {
+                int amount = GetARandomAmountNumber(1, 2001);
+                int feed = GetARandomAmountNumber(1, 11);
+                string queryString = "BEGIN TRANSACTION INSERT INTO Vehicle(TypeName, VehicleAmount, Feed, DateStamp, WeekNumber, HourStamp) VALUES('Motorcycle', @amount, @feed, @latestDate, @weekNumber, @latestHour); COMMIT";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand readCommand = new SqlCommand(queryString, con))
+                    {
+                        SqlParameter AddAmount = new SqlParameter("@amount", amount);
+                        readCommand.Parameters.Add(AddAmount);
+                        SqlParameter AddFeed = new SqlParameter("@feed", feed);
+                        readCommand.Parameters.Add(AddFeed);
+                        SqlParameter AddLatestDate = new SqlParameter("@latestDate", oDate);
+                        readCommand.Parameters.Add(AddLatestDate);
+                        SqlParameter AddWeekNumber = new SqlParameter("@weekNumber", weekNumber);
+                        readCommand.Parameters.Add(AddWeekNumber);
+                        SqlParameter AddLatestHour = new SqlParameter("@latestHour", sHour);
+                        readCommand.Parameters.Add(AddLatestHour);
+                        con.Open();
+                        readCommand.ExecuteNonQuery();
+                    }
+                }
+            }
+            else if (motorcycle != 0)
+            {
+                int amount = GetARandomAmountNumber(1, 2001);
+                int feed = GetARandomAmountNumber(1, 11);
+                string queryString = "BEGIN TRANSACTION UPDATE Vehicle SET VehicleAmount = @amount, Feed = @feed WHERE DateStamp = @latestDate AND HourStamp = @latestHour AND TypeName = 'Motorcycle'; COMMIT";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand readCommand = new SqlCommand(queryString, con))
+                    {
+                        SqlParameter AddAmount = new SqlParameter("@amount", amount);
+                        readCommand.Parameters.Add(AddAmount);
+                        SqlParameter AddFeed = new SqlParameter("@feed", feed);
+                        readCommand.Parameters.Add(AddFeed);
+                        SqlParameter AddLatestHour = new SqlParameter("@latestHour", sHour);
+                        readCommand.Parameters.Add(AddLatestHour);
+                        SqlParameter AddLatestDate = new SqlParameter("@latestDate", oDate);
+                        readCommand.Parameters.Add(AddLatestDate);
+                        con.Open();
+                        readCommand.ExecuteNonQuery();
+                    }
+                }
+            }
         }
         //Denne metode får alle biler, som sådan set nu er alle køretøjer som den henter fra seneste dato.
         public List<Vehicle> GetAllVehiclesByLatestDate()
@@ -300,12 +516,12 @@ namespace WebClient_Commentor.DB
             int index = 0;
 
             while (index < Weeks.Count())
-                {
+            {
                 int Index = Int32.Parse(Weeks[index]);
-                    Vehicle vehicle = SortByWeeks(Index);
-                    foundVehicles.Add(vehicle);
-                    index++;
-                }
+                Vehicle vehicle = SortByWeeks(Index);
+                foundVehicles.Add(vehicle);
+                index++;
+            }
 
             return foundVehicles;
 
@@ -368,7 +584,7 @@ namespace WebClient_Commentor.DB
             int weekNumber;
 
             weekNumber = dataReader.GetInt32(dataReader.GetOrdinal("WeekNumber"));
- 
+
             return weekNumber;
         }
 
@@ -379,10 +595,10 @@ namespace WebClient_Commentor.DB
             int tempVehicleAmount;
             string tempdatestamp;
             string temphourstamp;
-            
+
             if (check)
             {
-                
+
                 tempvehicleid = vehiclesReader.GetInt32(vehiclesReader.GetOrdinal("VehicleId"));
                 tempVehicleAmount = vehiclesReader.GetInt32(vehiclesReader.GetOrdinal("VehicleAmount"));
                 tempdatestamp = vehiclesReader.GetString(vehiclesReader.GetOrdinal("DateStamp"));
@@ -415,5 +631,6 @@ namespace WebClient_Commentor.DB
             foundVehicles = new Vehicle(tempVehicleAmount, tempdatestamp, "");
             return foundVehicles;
         }
+
     }
 }
