@@ -32,35 +32,33 @@ namespace WebClient_Commentor.Controllers
             IEnumerable<int> VehicleAmount = null;
             IEnumerable<string> HourStamp = null;
             string TypeName = null;
-            DateTime? DateStamp = null;
+            string DateStamp = null;
 
             //List<Vehicle> vehiclesByDate = dbvehicles.GetAllVehiclesByLatestDate();
-            List<Vehicle> vehiclesBy7Latest = dbvehicles.Get7LatestVehicles();
-            List<String> Hours = new List<String>();
+            List<Vehicle> vehiclesBy7Latest = dbvehicles.GetAllLatestVehiclesFromLatestHour();
+            List<string> Hours = new List<string>();
 
             //måske til senere.
             //var VehicleAmount = vehicles.Select(x => x.VehicleAmount).OrderBy(x => x).ToArray()
             int Amount = 0;
 
-            
-            
-                VehicleAmount = SelectVehicleAmount(vehiclesBy7Latest);
-                HourStamp = SelectHourStamp(vehiclesBy7Latest);
-                DateStamp = vehiclesBy7Latest[vehiclesBy7Latest.Count - 1].DateTimeStamp;
-                foreach (var item in HourStamp)
-                {
-                    Hours.Add(item);
-                }
-                /*
-                foreach (var item in DateStamp)
-                {
-                    Amount++;
-                }
-                */
+            VehicleAmount = SelectVehicleAmount(vehiclesBy7Latest);
+            HourStamp = SelectHourStampStrings(vehiclesBy7Latest, "Time", false);
+            DateStamp = vehiclesBy7Latest[vehiclesBy7Latest.Count - 1].DateTime;
+            foreach (var item in HourStamp)
+            {
+                Hours.Add(item);
+            }
+            /*
+            foreach (var item in DateStamp)
+            {
+                Amount++;
+            }
+            */
             
             ViewBag.CARCOUNT = VehicleAmount;
             ViewBag.CURRENTHOUR = Hours;
-            ViewBag.DateStamp = DateStamp.ToString();
+            ViewBag.DateStamp = DateTime.Now.ToString();
             ViewBag.AMOUNT = Amount;
             ViewBag.LOGGEDIN = false;
             ViewBag.VEHICLETYPE = TypeName;
@@ -78,7 +76,7 @@ namespace WebClient_Commentor.Controllers
         public ActionResult KameraOversigt()
         {
             DBAccessVehicles dbcars = new DBAccessVehicles();
-            Vehicle LatestCar = dbcars.Get7LatestVehicles()[0];
+            Vehicle LatestCar = dbcars.GetAllLatestVehiclesFromLatestHour()[0];
             ViewBag.HEYHEYSIMON = LatestCar.VehicleAmount;
 
             return View();
@@ -103,27 +101,27 @@ namespace WebClient_Commentor.Controllers
         {
             List<Vehicle> vehicle = dbVehicles.getSortedVehiclesDay(startDate, endDate);
             IEnumerable<int> selectAmount = SelectVehicleAmount(vehicle);
-            IEnumerable<string> selectHour = SelectHourStampStrings(vehicle);
+            IEnumerable<string> selectHour = SelectHourStampStrings(vehicle, "Dato", false);
             IEnumerable<string> selectDay = SelectCurrentDays(vehicle);
             return Json(new { countSelect = selectAmount, hourSelect = selectHour, daySelect = selectDay }, JsonRequestBehavior.AllowGet);
         }
 
-        /*
-        public JsonResult SortBetweenWeeks()
+        
+        public JsonResult SortBetweenWeeks(string startDate, string endDate)
         {
-            List<Vehicle> vehicles = dbVehicles.LoopThroughWeeks();
+            List<Vehicle> vehicles = dbVehicles.SortByWeeks(startDate, endDate);
             IEnumerable<int> selectAmount = SelectVehicleAmount(vehicles);
-            IEnumerable<string> selectHour = SelectHourStamp(vehicles);
+            IEnumerable<string> selectHour = SelectHourStampStrings(vehicles, "Uge", false);
             IEnumerable<string> selectDay = SelectCurrentWeekNumber(vehicles);
             return Json(new { countSelect = selectAmount, hourSelect = selectHour, daySelect = selectDay }, JsonRequestBehavior.AllowGet);
         }
-        */
+        
 
         public JsonResult SortBetweenDaysAndHours(string startHour, string endHour, string startDate, string endDate, string vehicleType)
         {
             List<Vehicle> vehicles = dbVehicles.getSortedVehiclesDayAndHours(startHour, endHour, startDate, endDate, vehicleType);
             IEnumerable<int> selectAmount = SelectVehicleAmount(vehicles);
-            IEnumerable<string> selectHour = SelectHourStamp(vehicles);
+            IEnumerable<string> selectHour = SelectHourStampStrings(vehicles, "Time", true);
             IEnumerable<string> selectDay = SelectCurrentDays(vehicles);
             IEnumerable<string> selectVehiType = SelectVehicleType(vehicles);
             return Json(new { countSelect = selectAmount, hourSelect = selectHour, daySelect = selectDay, vehicleSelect = selectVehiType }, JsonRequestBehavior.AllowGet);
@@ -144,7 +142,7 @@ namespace WebClient_Commentor.Controllers
             testData.GenerateTestDataVehicles();
             string startDate = "10 Dec 2020";
             string endDate = "11 Dec 2020";
-            List<Vehicle> vehicle = dbVehicles.Get7LatestVehicles();
+            List<Vehicle> vehicle = dbVehicles.GetAllLatestVehiclesFromLatestHour();
             IEnumerable<int> selectAmount = SelectVehicleAmount(vehicle);
             IEnumerable<string> selectHour = SelectHourStamp(vehicle);
             IEnumerable<string> selectDay = SelectCurrentDays(vehicle);
@@ -184,20 +182,31 @@ namespace WebClient_Commentor.Controllers
             return HourAndDate;
         }
 
-        public IEnumerable<string> SelectHourStampStrings(List<Vehicle> vehicles)
+        public IEnumerable<string> SelectHourStampStrings(List<Vehicle> vehicles, string title, bool check)
         {
-            //List<string> HourStamp = vehicles.Select(x => x.HourStamp).ToList();
+            List<string> HourStamp = vehicles.Select(x => x.HourToGet).ToList();
             List<string> DateStamp = vehicles.Select(x => x.DateTime).ToList();
             IEnumerable<string> HourAndDate = new List<string>();
 
             int index = 0;
             while (index != DateStamp.Count())
             {
-                //string hour = HourStamp[index];
                 string date = DateStamp[index];
-                string finalResult = "Dato: " + date;
-                HourAndDate = HourAndDate.Concat(new[] { finalResult });
-                index++;
+                string hour = HourStamp[index];
+                string finalResult = "";
+                if(check)
+                {
+                    finalResult = title + ": " + date + " Kl:" + hour;
+                    HourAndDate = HourAndDate.Concat(new[] { finalResult });
+                    index++;
+                }
+                else
+                {
+                    finalResult = title + ": " + date;
+                    HourAndDate = HourAndDate.Concat(new[] { finalResult });
+                    index++;
+                }
+                
             }
             return HourAndDate;
         }

@@ -38,9 +38,10 @@
             labels: @Html.Raw(Json.Encode(ViewBag.CURRENTHOUR)),
             datasets: [{
                 label: '',
+                fill: false,
                 data: @Html.Raw(Json.Encode(ViewBag.CARCOUNT)),
                 backgroundColor: color,
-                borderWidth: 1,
+                borderWidth: 10,
                 borderColor: color,
                 hoverBorderWidth: 3,
                 hoverBorderColor: '#000'
@@ -88,6 +89,7 @@
             type: 'horizontalBar', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
             data: chartData,
             options: optionsData,
+            
         });
 
         function change(newType) {

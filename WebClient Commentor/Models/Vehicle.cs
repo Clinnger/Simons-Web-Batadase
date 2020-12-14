@@ -10,6 +10,7 @@ namespace WebClient_Commentor.Models
         public int Feed { get; set; }
         public DateTime DateTimeStamp { get; set; }
         public string DateTime { get; set; }
+        public string HourToGet { get; set; }
 
         public Vehicle(int vehicleId, string typeName, int vehicleAmount, int feed, DateTime dateStamp)
         {
@@ -27,10 +28,11 @@ namespace WebClient_Commentor.Models
             DateTimeStamp = dateStamp;
         }
 
-        public Vehicle(int vehicleAmount, DateTime dateStamp)
+        public Vehicle(int vehicleAmount, string dateStamp, string hourToGet)
         {
             VehicleAmount = vehicleAmount;
-            DateTimeStamp = dateStamp;
+            DateTime = dateStamp;
+            HourToGet = hourToGet;
         }
 
         public Vehicle(int vehicleAmount, string dateTime)

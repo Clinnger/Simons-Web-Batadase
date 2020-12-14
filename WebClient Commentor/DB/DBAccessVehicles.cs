@@ -58,7 +58,8 @@ namespace WebClient_Commentor.DB
             List<Vehicle> foundVehicles = null;
             Vehicle readVehicles = null;
             Vehicle emptyVehicle = new Vehicle(0, 0, DateTime.Now);
-            string queryString = "SELECT Vehicle.VehicleId, Vehicle.TypeName, Vehicle.VehicleAmount, Vehicle.Feed, Vehicle.DateTimeStamp, DatePart (YEAR, DateTimeStamp) AS Year, DatePart(DAY, DateTimeStamp)AS Day, DatePart(MONTH, DateTimeStamp) AS Month, DatePart(WEEK, DateTimeStamp) AS Week, DatePart(DAY, DateTimeStamp)AS Day, DatePart(HOUR, DateTimeStamp) AS Hour, DatePart(MINUTE, DateTimeStamp) AS Minute, DatePart(SECOND, DateTimeStamp) AS Second FROM Vehicle WHERE DateTimeStamp BETWEEN @StartDate AND @EndDate AND Vehicle.TypeName = @VehicleType";
+            string queryString = "select Sum(VehicleAmount) as VehicleAmount, DATEPART(hour, DateTimeStamp) as Hour, FORMAT(DateTimeStamp,'yyyy-MM-dd') as DateTimeStamp from vehicle where FORMAT(DateTimeStamp,'yyyy-MM-dd') = (select(max(FORMAT(DateTimeStamp,'yyyy-MM-dd'))) from vehicle) group by DATEPART(hour, DateTimeStamp), FORMAT(DateTimeStamp,'yyyy-MM-dd')";
+            //string queryString = "SELECT Vehicle.VehicleId, Vehicle.TypeName, Vehicle.VehicleAmount, Vehicle.Feed, Vehicle.DateTimeStamp, DatePart (YEAR, DateTimeStamp) AS Year, DatePart(DAY, DateTimeStamp)AS Day, DatePart(MONTH, DateTimeStamp) AS Month, DatePart(WEEK, DateTimeStamp) AS Week, DatePart(DAY, DateTimeStamp)AS Day, DatePart(HOUR, DateTimeStamp) AS Hour, DatePart(MINUTE, DateTimeStamp) AS Minute, DatePart(SECOND, DateTimeStamp) AS Second FROM Vehicle WHERE DateTimeStamp BETWEEN @StartDate AND @EndDate AND Vehicle.TypeName = @VehicleType";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             using (SqlCommand readCommand = new SqlCommand(queryString, con))
@@ -79,7 +80,7 @@ namespace WebClient_Commentor.DB
                     foundVehicles.Add(emptyVehicle);
                     while (vehiclesReader.Read())
                     {
-                        readVehicles = GetVehiclesFromReader(vehiclesReader, true);
+                        readVehicles = GetVehiclesWithIntFromReader(vehiclesReader, false);
                         foundVehicles.Add(readVehicles);
                     }
                 }
@@ -342,11 +343,11 @@ namespace WebClient_Commentor.DB
         }
 
         //Denne metode henter de 7 seneste timer med køretøjer.
-        public List<Vehicle> Get7LatestVehicles()
+        public List<Vehicle> GetAllLatestVehiclesFromLatestHour()
         {
-            List<Vehicle> foundVehicles = null;
-            Vehicle readVehicles = null;
-            string queryString = "WITH SortedSeven AS (SELECT TOP 7 Vehicle.VehicleId, Vehicle.TypeName, Vehicle.VehicleAmount, Vehicle.Feed, Vehicle.DateTimeStamp FROM Vehicle ORDER BY VehicleId DESC) SELECT * FROM SortedSeven ORDER BY VehicleId";
+            List<Vehicle> foundVehicles = new List<Vehicle>();
+            string queryString = "select Sum(VehicleAmount) as VehicleAmount, DATEPART(hour, DateTimeStamp) as Hour, FORMAT(DateTimeStamp,'yyyy-MM-dd') as DateTimeStamp from vehicle where FORMAT(DateTimeStamp,'yyyy-MM-dd') = (select(max(FORMAT(DateTimeStamp,'yyyy-MM-dd'))) from vehicle) and DATEPART(hour, DateTimeStamp) >= '08' and DATEPART(hour, DateTimeStamp) <= '20' group by DATEPART(hour, DateTimeStamp), FORMAT(DateTimeStamp,'yyyy-MM-dd')";
+            //string queryString = "WITH SortedSeven AS (SELECT TOP 7 Vehicle.VehicleId, Vehicle.TypeName, Vehicle.VehicleAmount, Vehicle.Feed, Vehicle.DateTimeStamp FROM Vehicle ORDER BY VehicleId DESC) SELECT * FROM SortedSeven ORDER BY VehicleId";
             Vehicle emptyVehicle = new Vehicle(0, 0, DateTime.Now);
 
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -358,11 +359,10 @@ namespace WebClient_Commentor.DB
 
                 if (vehiclesReader.HasRows)
                 {
-                    foundVehicles = new List<Vehicle>();
                     foundVehicles.Add(emptyVehicle);
                     while (vehiclesReader.Read())
                     {
-                        readVehicles = GetVehiclesFromReader(vehiclesReader, true);
+                        Vehicle readVehicles = GetVehiclesFromReader(vehiclesReader, false);
                         foundVehicles.Add(readVehicles);
                     }
                 }
@@ -394,16 +394,22 @@ namespace WebClient_Commentor.DB
         */
 
         //Sorter efter uger.
-        public Vehicle SortByWeeks(int index)
+        public List<Vehicle> SortByWeeks(string StartDate, string EndDate)
         {
-            Vehicle readVehicles = null;
-            string queryString = "SELECT SUM(VehicleAmount) AS VehicleAmount, WeekNumber as WeekNumber FROM Vehicle WHERE WeekNumber = @index Group By WeekNumber";
+            List<Vehicle> readVehicles = new List<Vehicle>();
+            string queryString = "SELECT SUM(VehicleAmount) AS VehicleAmount, DATEPART(ww, DateTimeStamp) AS DateTimeStamp FROM Vehicle WHERE DATEPART(ww, DateTimeStamp) BETWEEN DATEPART(WEEK, @StartDate) AND DATEPART(WEEK, @EndDate) group by DATEPART(ww, DateTimeStamp)";
+            //string queryString = "SELECT SUM(VehicleAmount) AS VehicleAmount FROM Vehicle WHERE TypeName = @VehicleType and DatePart(WEEK, DateTimeStamp) = @index";
+            //string queryString = "SELECT SUM(VehicleAmount) AS VehicleAmount, WeekNumber as WeekNumber FROM Vehicle WHERE WeekNumber = @index Group By WeekNumber";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             using (SqlCommand readCommand = new SqlCommand(queryString, con))
             {
-                SqlParameter AddWeek = new SqlParameter("@index", index);
-                readCommand.Parameters.Add(AddWeek);
+                SqlParameter AddStartDate = new SqlParameter("@StartDate", StartDate);
+                readCommand.Parameters.Add(AddStartDate);
+                SqlParameter AddEndDate = new SqlParameter("@EndDate", EndDate);
+                readCommand.Parameters.Add(AddEndDate);
+                //SqlParameter AddWeek = new SqlParameter("@index", index);
+                //readCommand.Parameters.Add(AddWeek);
                 con.Open();
 
                 SqlDataReader vehiclesReader = readCommand.ExecuteReader();
@@ -412,7 +418,8 @@ namespace WebClient_Commentor.DB
                 {
                     while (vehiclesReader.Read())
                     {
-                        readVehicles = GetVehiclesWithIntFromReader(vehiclesReader);
+                        Vehicle aVehicle =  GetVehiclesWithIntFromReader(vehiclesReader, true);
+                        readVehicles.Add(aVehicle);
                     }
                 }
             }
@@ -433,6 +440,7 @@ namespace WebClient_Commentor.DB
                 tempvehicleid = vehiclesReader.GetInt32(vehiclesReader.GetOrdinal("VehicleId"));
                 tempVehicleAmount = vehiclesReader.GetInt32(vehiclesReader.GetOrdinal("VehicleAmount"));
                 tempdatestamp = (DateTime)vehiclesReader["DateTimeStamp"];
+                
 
                 foundVehicles = new Vehicle(tempvehicleid, tempVehicleAmount, tempdatestamp);
             }
@@ -447,20 +455,30 @@ namespace WebClient_Commentor.DB
             return foundVehicles;
         }
 
-
-
-
-        public Vehicle GetVehiclesWithIntFromReader(SqlDataReader vehiclesReader)
+        public Vehicle GetVehiclesWithIntFromReader(SqlDataReader vehiclesReader, bool check)
         {
-            Vehicle foundVehicles;
+            Vehicle foundVehicles = null;
+            string dateToName;
             int tempVehicleAmount;
-            DateTime tempdatestamp;
+            int tempDateStamp;
+            string tempGetHourFromClass;
+            if (check)
+            {
+                tempVehicleAmount = vehiclesReader.GetInt32(vehiclesReader.GetOrdinal("VehicleAmount"));
+                tempDateStamp = vehiclesReader.GetInt32(vehiclesReader.GetOrdinal("DateTimeStamp"));
+                foundVehicles = new Vehicle(tempVehicleAmount, tempDateStamp.ToString());
+            }
+            else
+            {
+                tempVehicleAmount = vehiclesReader.GetInt32(vehiclesReader.GetOrdinal("VehicleAmount"));
+                //dateToName = (DateTime)vehiclesReader["DateTimeStamp"];
+                dateToName = vehiclesReader["DateTimeStamp"].ToString();
+                tempGetHourFromClass = vehiclesReader.GetInt32(vehiclesReader.GetOrdinal("Hour")).ToString();
+                //tempdatestamp = vehiclesReader["DateTimeStamp"];
 
-            tempVehicleAmount = vehiclesReader.GetInt32(vehiclesReader.GetOrdinal("VehicleAmount"));
-            tempdatestamp = (DateTime)vehiclesReader["DateTimeStamp"];
-            
+                foundVehicles = new Vehicle(tempVehicleAmount, dateToName, tempGetHourFromClass);
+            }
 
-            foundVehicles = new Vehicle(tempVehicleAmount, tempdatestamp);
             return foundVehicles;
         }
     }
