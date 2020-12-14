@@ -43,7 +43,7 @@ namespace WebClient_Commentor.Controllers
             int Amount = 0;
 
             VehicleAmount = SelectVehicleAmount(vehiclesBy7Latest);
-            HourStamp = SelectHourStampStrings(vehiclesBy7Latest, "Time", false);
+            HourStamp = SelectHourStampStrings(vehiclesBy7Latest, "Dato", false);
             DateStamp = vehiclesBy7Latest[vehiclesBy7Latest.Count - 1].DateTime;
             foreach (var item in HourStamp)
             {
@@ -121,7 +121,7 @@ namespace WebClient_Commentor.Controllers
         {
             List<Vehicle> vehicles = dbVehicles.getSortedVehiclesDayAndHours(startHour, endHour, startDate, endDate, vehicleType);
             IEnumerable<int> selectAmount = SelectVehicleAmount(vehicles);
-            IEnumerable<string> selectHour = SelectHourStampStrings(vehicles, "Time", true);
+            IEnumerable<string> selectHour = SelectHourStampStrings(vehicles, "Dato", true);
             IEnumerable<string> selectDay = SelectCurrentDays(vehicles);
             IEnumerable<string> selectVehiType = SelectVehicleType(vehicles);
             return Json(new { countSelect = selectAmount, hourSelect = selectHour, daySelect = selectDay, vehicleSelect = selectVehiType }, JsonRequestBehavior.AllowGet);

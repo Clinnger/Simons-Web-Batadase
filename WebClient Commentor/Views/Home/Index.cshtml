@@ -41,8 +41,13 @@
                 fill: false,
                 data: @Html.Raw(Json.Encode(ViewBag.CARCOUNT)),
                 backgroundColor: color,
-                borderWidth: 10,
-                borderColor: color,
+                borderWidth: 3,
+                pointRadius: 7,
+                pointHoverRadius: 14,
+                lineTension: 0.5,
+                cuberInterpolationMode: 'default',
+                hoverBackgroundColor: "#ffffff",
+                borderColor: "#000",
                 hoverBorderWidth: 3,
                 hoverBorderColor: '#000'
             }]
@@ -259,10 +264,10 @@
                     <br>
                     <div class="pull-left" style="margin-right:5px">
                         <form>
-                            <input type="radio" class="custom-control-input" name="TYPENAME" value="Car">Biler
+                            <input type="radio" class="custom-control-input" name="TYPENAME" value="Cars">Biler
                             <input type="radio" class="custom-control-input" name="TYPENAME" value="Truck">Lastbiler
                             <input type="radio" class="custom-control-input" name="TYPENAME" value="Motorcycle">Motorcykler
-                            <input type="radio" class="custom-control-input" name="TYPENAME" value="Cars">køretøjer
+                            <input type="radio" class="custom-control-input" name="TYPENAME" value="Vehicle" checked>Køretøjer
                         </form>
                         <input class="sortHourandDays" type="button" value="Sorter Dato & Timer" onclick="loop(massPopChart, Amount, 'SortBetweenDaysAndHours')" />
                         <input class="sortDays" type="button" value="Sorter Efter Dage" onclick="loop(massPopChart, Amount, 'SortBetweenDays')">
