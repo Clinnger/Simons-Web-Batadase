@@ -9,15 +9,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <!--  VIGTIGT  -->
-    <!-- Der er mangel på Chart.min.js inde på selve projektet, for lige nu henter den selve javascriptet fra en database, hvilket ikke ville kunne fungere på en intranet -->
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>-->
     <script src="~/Scripts/Chart.min.js"></script>
-    <!--  bootstrap.min.css er også fikset nu, skal testes senere, for at se om det overhovedet virker  -->
     <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <title>My Chart.js Chart</title>
-    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <script type="text/javascript"></script>
     <link href="~/Content/Site.css" rel="stylesheet" />
     <link href="~/Content/Linkcolor.css" rel="stylesheet" />
@@ -51,11 +47,11 @@
             }]
         };
 
-        var CurrentDate =@Html.Raw(Json.Encode(ViewBag.CURRENTDATE));
+        var CurrentDate =@Html.Raw(Json.Encode(ViewBag.DateStamp));
         var optionsData = {
             title: {
                 display: true,
-                text: 'Biloptælling ' + CurrentDate,
+                text: 'Køretøjs Optælling ' + CurrentDate,
                 fontSize: 25
             },
             legend: {
@@ -277,13 +273,13 @@
                     @section scripts {
                         <script>
                             $('#datetimepicker1').datetimepicker({
-                                format: 'DD MMM YYYY'
+                                format: 'YYYY-MM-DD'
                             });
                         </script>
 
                         <script>
                             $('#datetimepicker2').datetimepicker({
-                                format: 'DD MMM YYYY'
+                                format: 'YYYY-MM-DD'
                             });
                         </script>
 

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace WebClient_Commentor.Models
 {
@@ -12,41 +8,40 @@ namespace WebClient_Commentor.Models
         public string TypeName { get; set; }
         public int VehicleAmount { get; set; }
         public int Feed { get; set; }
-        public string DateStamp { get; set; }
-        public int WeekNumber { get; set; }
-        public string HourStamp { get; set; }
+        public DateTime DateTimeStamp { get; set; }
+        public string DateTime { get; set; }
 
-        public Vehicle(int vehicleId, string typeName, int vehicleAmount, int feed, string dateStamp, int weekNumber, string hourStamp)
+        public Vehicle(int vehicleId, string typeName, int vehicleAmount, int feed, DateTime dateStamp)
         {
             VehicleId = vehicleId;
             TypeName = typeName;
             VehicleAmount = vehicleAmount;
             Feed = feed;
-            DateStamp = dateStamp;
-            WeekNumber = weekNumber;
-            HourStamp = hourStamp;
+            DateTimeStamp = dateStamp;
         }
 
-        public Vehicle(int vehicleId, int vehicleAmount, string dateStamp, string hourStamp)
+        public Vehicle(int vehicleId, int vehicleAmount, DateTime dateStamp)
         {
             VehicleId = vehicleId;
             VehicleAmount = vehicleAmount;
-            DateStamp = dateStamp;
-            HourStamp = hourStamp;
-
+            DateTimeStamp = dateStamp;
         }
 
-        public Vehicle(int vehicleAmount, string dateStamp, string hourStamp)
+        public Vehicle(int vehicleAmount, DateTime dateStamp)
         {
             VehicleAmount = vehicleAmount;
-            DateStamp = dateStamp;
-            HourStamp = hourStamp;
+            DateTimeStamp = dateStamp;
+        }
+
+        public Vehicle(int vehicleAmount, string dateTime)
+        {
+            VehicleAmount = vehicleAmount;
+            DateTime = dateTime;
         }
 
         public Vehicle()
         {
 
         }
-
     }
 }

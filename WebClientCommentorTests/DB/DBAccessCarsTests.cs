@@ -46,7 +46,7 @@ namespace WebClient_Commentor.DB.Tests
         {
             //Arrange Vehicles
             vehiclesToFind.VehicleId = 6;
-            vehiclesToFind.DateStamp = "10 Dec 2020";
+            vehiclesToFind.DateTimeStamp = "10 Dec 2020";
             vehiclesToFind.HourStamp = "09";
             vehiclesToFind.VehicleAmount = 15;
 
@@ -61,7 +61,7 @@ namespace WebClient_Commentor.DB.Tests
         public void getSortedVehiclesDayTest()
         {
             //Arrange Vehicles
-            vehiclesToFind.DateStamp = "10 Dec 2020";
+            vehiclesToFind.DateTimeStamp = "10 Dec 2020";
             vehiclesToFind.VehicleAmount = 50;
 
             //Act
@@ -90,7 +90,7 @@ namespace WebClient_Commentor.DB.Tests
         {
             //Arrange
             vehiclesToFind.VehicleId = 8;
-            vehiclesToFind.DateStamp = "11 Dec 2020";
+            vehiclesToFind.DateTimeStamp = "11 Dec 2020";
             vehiclesToFind.HourStamp = "10";
             vehiclesToFind.VehicleAmount = 65;
 
