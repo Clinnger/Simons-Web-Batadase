@@ -28,23 +28,21 @@ namespace WebClient_Commentor.Controllers
         {
 
             DBAccessVehicles dbvehicles = new DBAccessVehicles();
-            List<Vehicle> vehiclesToDisplay = dbvehicles.getAllVehicles();
             IEnumerable<int> VehicleAmount = null;
             IEnumerable<string> HourStamp = null;
             string TypeName = null;
             string DateStamp = null;
 
-            //List<Vehicle> vehiclesByDate = dbvehicles.GetAllVehiclesByLatestDate();
-            List<Vehicle> vehiclesBy7Latest = dbvehicles.GetAllLatestVehiclesFromLatestHour();
+            List<Vehicle> latestVehicles = dbvehicles.GetAllLatestVehiclesFromLatestDate();
             List<string> Hours = new List<string>();
 
             //måske til senere.
             //var VehicleAmount = vehicles.Select(x => x.VehicleAmount).OrderBy(x => x).ToArray()
             int Amount = 0;
 
-            VehicleAmount = SelectVehicleAmount(vehiclesBy7Latest);
-            HourStamp = SelectHourStampStrings(vehiclesBy7Latest, "Dato", false);
-            DateStamp = vehiclesBy7Latest[vehiclesBy7Latest.Count - 1].DateTime;
+            VehicleAmount = SelectVehicleAmount(latestVehicles);
+            HourStamp = SelectHourStampStrings(latestVehicles, "Dato", true);
+            DateStamp = latestVehicles[latestVehicles.Count - 1].DateTime;
             foreach (var item in HourStamp)
             {
                 Hours.Add(item);
@@ -63,7 +61,7 @@ namespace WebClient_Commentor.Controllers
             ViewBag.LOGGEDIN = false;
             ViewBag.VEHICLETYPE = TypeName;
 
-            return View(vehiclesToDisplay);
+            return View(latestVehicles);
         }
 
         public ActionResult Video_stream()
@@ -76,7 +74,7 @@ namespace WebClient_Commentor.Controllers
         public ActionResult KameraOversigt()
         {
             DBAccessVehicles dbcars = new DBAccessVehicles();
-            Vehicle LatestCar = dbcars.GetAllLatestVehiclesFromLatestHour()[0];
+            Vehicle LatestCar = dbcars.GetAllLatestVehiclesFromLatestDate()[0];
             ViewBag.HEYHEYSIMON = LatestCar.VehicleAmount;
 
             return View();
@@ -87,19 +85,10 @@ namespace WebClient_Commentor.Controllers
             return View();
         }
 
-        // Bruges ikke lige nu
-        /*
-        public JsonResult SortBetweenHours(string startHour, string endHour)
-        {
-            List<Vehicles> vehicles = dbVehicles.getSortedVehiclesHour(startHour, endHour);
-            IEnumerable<int> selectAmount = SelectVehicleAmount(vehicles);
-            IEnumerable<string> selectHour = SelectHourStamp(vehicles);
-            return Json(new { countSelect = selectAmount, hourSelect = selectHour }, JsonRequestBehavior.AllowGet);
-        }*/
 
-        public JsonResult SortBetweenDays(string startDate, string endDate)
+        public JsonResult SortBetweenDays(string startDate, string endDate, string VehicleType)
         {
-            List<Vehicle> vehicle = dbVehicles.getSortedVehiclesDay(startDate, endDate);
+            List<Vehicle> vehicle = dbVehicles.getSortedVehiclesDay(startDate, endDate, VehicleType);
             IEnumerable<int> selectAmount = SelectVehicleAmount(vehicle);
             IEnumerable<string> selectHour = SelectHourStampStrings(vehicle, "Dato", false);
             IEnumerable<string> selectDay = SelectCurrentDays(vehicle);
@@ -107,9 +96,9 @@ namespace WebClient_Commentor.Controllers
         }
 
         
-        public JsonResult SortBetweenWeeks(string startDate, string endDate)
+        public JsonResult SortBetweenWeeks(string startDate, string endDate, string VehicleType)
         {
-            List<Vehicle> vehicles = dbVehicles.SortByWeeks(startDate, endDate);
+            List<Vehicle> vehicles = dbVehicles.SortByWeeks(startDate, endDate, VehicleType);
             IEnumerable<int> selectAmount = SelectVehicleAmount(vehicles);
             IEnumerable<string> selectHour = SelectHourStampStrings(vehicles, "Uge", false);
             IEnumerable<string> selectDay = SelectCurrentWeekNumber(vehicles);
@@ -140,22 +129,11 @@ namespace WebClient_Commentor.Controllers
         {
             DBAccessVehicles testData = new DBAccessVehicles();
             testData.GenerateTestDataVehicles();
-            string startDate = "10 Dec 2020";
-            string endDate = "11 Dec 2020";
-            List<Vehicle> vehicle = dbVehicles.GetAllLatestVehiclesFromLatestHour();
+            List<Vehicle> vehicle = dbVehicles.GetAllLatestVehiclesFromLatestDate();
             IEnumerable<int> selectAmount = SelectVehicleAmount(vehicle);
-            IEnumerable<string> selectHour = SelectHourStamp(vehicle);
+            IEnumerable<string> selectHour = SelectHourStampStrings(vehicle, "Dato", true);
             IEnumerable<string> selectDay = SelectCurrentDays(vehicle);
             return Json(new { countSelect = selectAmount, hourSelect = selectHour, daySelect = selectDay }, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult FindVehicleType()
-        {
-
-            int vehicles = dbVehicles.FindVehicleType("Car");
-            
-            return Json(new { test = vehicles }, JsonRequestBehavior.AllowGet);
-
         }
 
         public IEnumerable<int> SelectVehicleAmount(List<Vehicle> vehicles)
@@ -166,14 +144,12 @@ namespace WebClient_Commentor.Controllers
 
         public IEnumerable<string> SelectHourStamp(List<Vehicle> vehicles)
         {
-            //List<string> HourStamp = vehicles.Select(x => x.HourStamp).ToList();
             List<DateTime> DateStamp = vehicles.Select(x => x.DateTimeStamp).ToList();
             IEnumerable<string> HourAndDate = new List<string>();
 
             int index = 0;
             while(index != DateStamp.Count())
             {
-                //string hour = HourStamp[index];
                 DateTime date = DateStamp[index];
                 string finalResult = "Dato: " + date;
                 HourAndDate = HourAndDate.Concat(new[] { finalResult });
@@ -213,13 +189,11 @@ namespace WebClient_Commentor.Controllers
 
         public IEnumerable<string> SelectCurrentDays(List<Vehicle> vehicles)
         {
-            //List<string> HourStamp = vehicles.Select(x => x.HourStamp).ToList();
             List<DateTime> DateStamp = vehicles.Select(x => x.DateTimeStamp).ToList();
             IEnumerable<string> HourAndDate = new List<string>();
             int index = 0;
             while (index != DateStamp.Count())
             {
-                //string hour = HourStamp[index];
                 DateTime date = DateStamp[index];
                 string finalResult = "Dato: " + date;
                 HourAndDate = HourAndDate.Concat(new[] { finalResult });
@@ -236,14 +210,12 @@ namespace WebClient_Commentor.Controllers
 
         public IEnumerable<string> SelectCurrentWeekNumber(List<Vehicle> vehicles)
         {
-            //List<string> HourStamp = vehicles.Select(x => x.HourStamp).ToList();
             List<DateTime> DateStamp = vehicles.Select(x => x.DateTimeStamp).ToList();
             IEnumerable<string> HourAndDate = new List<string>();
 
             int index = 0;
             while (index != DateStamp.Count())
             {
-                //string hour = HourStamp[index];
                 DateTime date = DateStamp[index];
                 string finalResult = "Uge: " + date;
                 HourAndDate = HourAndDate.Concat(new[] { finalResult });
