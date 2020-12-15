@@ -20,6 +20,51 @@ namespace WebClient_Commentor.DB
             connectionString = "data Source=.; database=CommentorDB; integrated security=true";
         }
 
+        public int getLatestHourFromVehicles()
+        {
+            int foundHour = 0;
+            string queryString = "select DATEPART(hour, DateTimeStamp) as Hour from vehicle where vehicleid = (select (max(vehicleid)) from vehicle)";
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlCommand readCommand = new SqlCommand(queryString, con))
+            {
+               
+                con.Open();
+
+                foundHour = (int)readCommand.ExecuteScalar();
+
+            }
+            return foundHour;
+        }
+
+        public List<Vehicle> GetVehiclesForMapOverview()
+        {
+            List<Vehicle> readVehicles = new List<Vehicle>();
+            int foundHour = getLatestHourFromVehicles();
+            string queryString = "select Sum(VehicleAmount) as VehicleAmount, DATEPART(hour, DateTimeStamp) as Hour, FORMAT(DateTimeStamp, 'yyyy-MM-dd') as DateTimeStamp, Feed from Vehicle where FORMAT(DateTimeStamp, 'yyyy-MM-dd') = (select(max(FORMAT(DateTimeStamp, 'yyyy-MM-dd'))) from vehicle) and DatePart(hour, DateTimeStamp) = @Hour group by DATEPART(hour, DateTimeStamp), FORMAT(DateTimeStamp, 'yyyy-MM-dd'), Feed";
+
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlCommand readCommand = new SqlCommand(queryString, con))
+            {
+                SqlParameter AddHour = new SqlParameter("@Hour", foundHour);
+                readCommand.Parameters.Add(AddHour);
+                con.Open();
+
+                SqlDataReader vehiclesReader = readCommand.ExecuteReader();
+
+                if (vehiclesReader.HasRows)
+                {
+                    while (vehiclesReader.Read())
+                    {
+                        Vehicle aVehicle = GetVehiclesWithAmount(vehiclesReader);
+                        readVehicles.Add(aVehicle);
+                    }
+                }
+            }
+            return readVehicles;
+        }
+
         //Sorter efter uger.
         public List<Vehicle> SortByWeeks(string StartDate, string EndDate, string VehicleType)
         {
@@ -294,7 +339,7 @@ namespace WebClient_Commentor.DB
                 tempvehicleid = vehiclesReader.GetInt32(vehiclesReader.GetOrdinal("VehicleId"));
                 tempVehicleAmount = vehiclesReader.GetInt32(vehiclesReader.GetOrdinal("VehicleAmount"));
                 tempdatestamp = (DateTime)vehiclesReader["DateTimeStamp"];
-                
+
 
                 foundVehicles = new Vehicle(tempvehicleid, tempVehicleAmount, tempdatestamp);
             }
@@ -332,6 +377,16 @@ namespace WebClient_Commentor.DB
 
                 foundVehicles = new Vehicle(tempVehicleAmount, dateToName, tempGetHourFromClass);
             }
+
+            return foundVehicles;
+        }
+
+        public Vehicle GetVehiclesWithAmount(SqlDataReader vehiclesReader)
+        {
+            Vehicle foundVehicles = null;
+            int tempVehicleAmount = vehiclesReader.GetInt32(vehiclesReader.GetOrdinal("VehicleAmount"));
+            foundVehicles = new Vehicle(tempVehicleAmount);
+
 
             return foundVehicles;
         }

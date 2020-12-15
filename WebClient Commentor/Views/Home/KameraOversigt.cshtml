@@ -49,7 +49,6 @@
             [57.0424, 9.9306, videoPlay5, "Jyllandsgade, 9000 Aalborg"], //Placeholder her, erstat med ny videoPlayX og text.
             [57.0426, 9.9182, videoPlay3, "John F. Kennedys Pl, 9000 Aalborg"], //Placeholder her, erstat med ny videoPlayX og text.
             [57.0468, 9.9142, videoPlay3, "Prinsensgade, 9000 Aalborg"], //Placeholder her, erstat med ny videoPlayX og text.
-            [57.0411, 9.9105, videoPlay3, "Kong Christians Alle"], //Placeholder her, erstat med ny videoPlayX og text.    X erstattes med et tal.
             [57.0392, 9.9211, videoPlay3, "Dag Hammarskjølds Gade, 9000 Aalborg"], //Placeholder her, erstat med ny videoPlayX og text.
             [57.0377, 9.9314, videoPlay3, "Østre Alle 97, 9000 Aalborg"], //Placeholder her, erstat med ny videoPlayX og text.
             [57.0399, 9.9461, videoPlay3, "Placeholder"], //Placeholder her, erstat med ny videoPlayX og text.
@@ -116,60 +115,35 @@
             [57.0424, 9.9306],
             [57.0426, 9.9182],
             [57.0468, 9.9142],
-            [57.0411, 9.9105],
             [57.0392, 9.9211],
             [57.0377, 9.9314],
             [57.0399, 9.9461],
-            [57.0337, 9.9543], 
+            [57.0337, 9.9543],
+
         ]
 
-
-
-
-        var circlegrp = new L.layerGroup();
-        //alert(circles.length);
         for (var i = 0; i < circles.length; i++) {
-            //new L.circle(circles[i], 20, circle_option).addTo(mymap);
-            new L.circle(circles[i], 35, {
+            new L.circle(circles[i], 55, {
                 color: 'green',
                 fillColor: 'green',
-                fillOpacity: 0.6
+                fillOpacity: 0.9
             }).addTo(mymap);
-            if (CarAmount > 4 && CarAmount < 50) {
-                new L.circle(circles[i], 35, {
-                    color: 'yellow',
-                    fillColor: 'yellow',
-                    fillOpacity: 0.6
+            if (CarAmount[i].VehicleAmount > 37 && CarAmount[i].VehicleAmount < 50) {
+                new L.circle(circles[i], 55, {
+                    color: 'orange',
+                    fillColor: 'orange',
+                    fillOpacity: 0.9
                 }).addTo(mymap);
             }
-            if (CarAmount > 50) {
-                new L.circle(circles[i], 35, {
+            if (CarAmount[i].VehicleAmount >= 50) {
+                new L.circle(circles[i], 55, {
                     color: 'red',
                     fillColor: 'red',
-                    fillOpacity: 0.6
+                    fillOpacity: 0.9
                 }).addTo(mymap);
             }
 
         }
-        //mymap.addTo(circlegrp);
-
-        //mymap.addLayer(circlestwo);
-        //    if (CarAmount > 4 && CarAmount < 50) {
-               
-                 
-        //    }
-        //    if (CarAmount > 50) {
-
-        //        circle_one = L.circle(feed1, 20, circle_options3).addTo(mymap);
-        //}
-        
-       
-
-
-
-
-
-
-
+ 
     </script>
 </body>

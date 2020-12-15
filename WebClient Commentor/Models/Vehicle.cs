@@ -41,6 +41,11 @@ namespace WebClient_Commentor.Models
             DateTime = dateTime;
         }
 
+        public Vehicle(int vehicleAmount)
+        {
+            VehicleAmount = vehicleAmount;
+        }
+
         public Vehicle()
         {
 

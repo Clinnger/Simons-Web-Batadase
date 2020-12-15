@@ -75,7 +75,7 @@ namespace WebClient_Commentor.Controllers
         {
             DBAccessVehicles dbcars = new DBAccessVehicles();
             Vehicle LatestCar = dbcars.GetAllLatestVehiclesFromLatestDate()[0];
-            ViewBag.HEYHEYSIMON = LatestCar.VehicleAmount;
+            ViewBag.HEYHEYSIMON = dbcars.GetVehiclesForMapOverview();
 
             return View();
         }
